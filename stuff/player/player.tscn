@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://bwxbyv5so6cwd"]
+
+[ext_resource type="Script" path="res://stuff/player/scripts/controller.gd" id="1_3ffxd"]
+[ext_resource type="Texture2D" uid="uid://xv1iewpa4gir" path="res://stuff/player/fighter.png" id="2_r82kv"]
+[ext_resource type="Script" path="res://stuff/player/scripts/colission.gd" id="3_e58m7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_srcfd"]
+size = Vector2(10, 14)
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_3ffxd")
+RAYCAST_COLLISION_MASK = 2
+
+[node name="sprite" type="Node2D" parent="."]
+
+[node name="Fighter_hair" type="Sprite2D" parent="sprite"]
+texture = ExtResource("2_r82kv")
+region_enabled = true
+region_rect = Rect2(48, 0, 16, 16)
+
+[node name="Fighter_leg" type="Sprite2D" parent="sprite"]
+z_index = 1
+texture = ExtResource("2_r82kv")
+region_enabled = true
+region_rect = Rect2(0, 32, 16, 16)
+
+[node name="Fighter_body" type="Sprite2D" parent="sprite"]
+z_index = 2
+texture = ExtResource("2_r82kv")
+region_enabled = true
+region_rect = Rect2(0, 16, 16, 16)
+
+[node name="Fighter_face" type="Sprite2D" parent="sprite"]
+z_index = 3
+texture = ExtResource("2_r82kv")
+region_enabled = true
+region_rect = Rect2(16, 0, 16, 16)
+
+[node name="collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_srcfd")
+script = ExtResource("3_e58m7")
