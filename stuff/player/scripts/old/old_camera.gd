@@ -34,7 +34,7 @@ func _ready():
 	DEFAULT_ZOOM = clamp(DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM) #clamp
 	set_zoom(Vector2(DEFAULT_ZOOM, DEFAULT_ZOOM))
 
-func _physics_process(delta):
+func _physics_process(_delta):
 
 	if player == null:
 		return
@@ -47,7 +47,6 @@ func _physics_process(delta):
 		if Input.is_action_just_released("scroll_up"):
 			var new_zoom = clamp(zoom.x + ZOOM_SPEED, MIN_ZOOM, MAX_ZOOM)
 			zoom = Vector2(new_zoom, new_zoom)
-			
 		if Input.is_action_just_released("scroll_down"):
 			var new_zoom = clamp(zoom.x - ZOOM_SPEED, MIN_ZOOM, MAX_ZOOM)
 			zoom = Vector2(new_zoom, new_zoom)

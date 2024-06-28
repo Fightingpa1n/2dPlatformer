@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://cblss4llevr8v"]
+
+[node name="Git" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Git"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 26
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer3"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer3/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="refresh" type="Button" parent="VBoxContainer3/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "refresh"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer3/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="staged_list" type="ItemList" parent="VBoxContainer3/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+allow_search = false
+auto_height = true
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer3/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="file_list" type="ItemList" parent="VBoxContainer3/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+allow_search = false
+auto_height = true
+item_count = 3
+item_0/text = "TEst"
+item_0/selectable = false
+item_1/text = "nani?"
+item_1/selectable = false
+item_2/text = "hey!"
+item_2/selectable = false
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer3/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer3/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="message" type="TextEdit" parent="VBoxContainer3/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 1
+placeholder_text = "Commit Message..."
+shortcut_keys_enabled = false
+drag_and_drop_selection_enabled = false
+wrap_mode = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer3/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="commit" type="Button" parent="VBoxContainer3/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "Commit"

@@ -2,9 +2,6 @@
 extends State_Ascend
 class_name State_Jump
 
-func enter():
-    player.jump_time = 0 #reset jump time
-
 func physics_process(delta):
     move(delta)
     ledge_forgivness()

@@ -1,33 +1,30 @@
 #controller.gd
 extends CharacterBody2D
 
-#this is the main Player Controller script containing values, functions and being responsible for the state machine
+#this is the main Player Controller script
 
 #=== constant values ===
 @export_category("Player Settings")
-@export_group("Physics Settings")
-@export var FALL_SPEED = 500.0 #the speed the player falls at (at a maximum)
-@export var FALL_ACCELERATION = 1030.0 #the acceleration applied to the fall speed (basically it's just a fancy way of saying gravity)
-@export_subgroup("Grounded")
-@export var GROUND_DECELERATION = 3600.0 #the deceleration applied to each velocity vector when the player is grounded
-@export_subgroup("Air")
-@export var AIR_DECELERATION = 3600.0 #the deceleration applied to each velocity vector when the player is in the air
+@export_group("Gravity Settings")
+@export var FALL_SPEED = 500.0
+@export var FALL_ACCELERATION = 1030.0
+@export var GROUND_DECELERATION = 3600.0
 
 @export_group("Movement Settings")
-@export var WALK_SPEED = 300.0 #the speed the player walks at (at a maximum)
-@export var WALK_ACCELERATION = 3600.0 #the acceleration applied to the walk speed
-@export var WALK_DECELERATION = 3600.0 #the deceleration applied to the walk speed
+@export var WALK_SPEED = 300.0
+@export var WALK_ACCELERATION = 3600.0
+@export var WALK_DECELERATION = 3600.0
 @export_subgroup("Air Movement Settings")
-@export var AIR_MOVE_SPEED = 300.0 #the speed the player moves in the air (at a maximum)
-@export var AIR_MOVE_ACCELERATION = 3600.0 #the acceleration applied to the air move speed
-@export var AIR_MOVE_DECELERATION = 3600.0 #the deceleration applied to the air move speed
+@export var AIR_MOVE_SPEED = 300.0
+@export var AIR_MOVE_ACCELERATION = 360.0
+@export var AIR_MOVE_DECELERATION = 360.0
 
 @export_group("Jump Settings")
-@export var JUMP_FORCE = 400.0 #the force applied to the player when jumping
-@export var MIN_JUMP_TIME = 0.1 #the time the jump force is applied minumum when pressing the jump button
-@export var MAX_JUMP_TIME = 0.5 #the time the jump button can be held down after the minimum was reached to apply the jump force
+@export var JUMP_FORCE = 400.0
+@export var MIN_JUMP_TIME = 0.1
+@export var MAX_JUMP_TIME = 0.5
 @export_subgroup("Double Jump stuff")
-@export var EXTRA_JUMPS = 1 #the amount of extra jumps the player can do (0 = no extra jumps)
+@export var EXTRA_JUMPS = 1
 
 @export_group("Wall Settings")
 @export var WALL_SLIDE_SPEED = 100.0
@@ -40,18 +37,20 @@ extends CharacterBody2D
 @export var WALL_JUMP_DIRECTION = Vector2(-1, -1) #in this value persumes that the wall is on the left and the player is jumping right
 
 @export_group("Raycast Settings")
-@export var CEILING_RAYCAST_LENGTH = 2.5 #the length of the raycast for the ceiling check
-@export var WALL_RAYCAST_LENGTH = 2.5 #the length of the raycast for the wall check
-@export var FLOOR_RAYCAST_LENGTH = 2.5 #the length of the raycast for the floor check
-@export_flags_2d_physics var RAYCAST_COLLISION_MASK = 1 #the collision mask for the collision checks
+@export var CEILING_RAYCAST_LENGTH = 2.5
+@export var WALL_RAYCAST_LENGTH = 2.5
+@export var FLOOR_RAYCAST_LENGTH = 2.5
+@export_flags_2d_physics var RAYCAST_COLLISION_MASK = 1
+
 @export_subgroup("Jump Buffer Settings")
-@export var JUMP_BUFFER_RAYCAST_INITAL_LENGTH = 20.0 #the inital length of the raycast for the jump buffer
-@export var JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER = 100.0 #bassically how much the velocity influences the length of the raycast
+@export var JUMP_BUFFER_RAYCAST_INITAL_LENGTH = 20.0
+@export var JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER = 100.0
 
 @export_group("Abilities (or just other stuff idk)")
 @export_subgroup("fastfall thingy") #todo: find a better name
 @export var FASTFALL_SPEED = 1000.0
 @export var FASTFALL_ACCELERATION = 2060.0
+
 @export_subgroup("coyote_time")
 @export var COYOTE_TIME = 0.1
 
@@ -86,6 +85,8 @@ func _ready():
 	player_states["fall"] = State_Fall.new(self)
 	player_states["fast_fall"] = State_FastFall.new(self)
 	player_states["jump"] = State_Jump.new(self)
+	player_states["walled"] = State_Walled.new(self)
+	player_states["powaad"] = State_Powaad.new(self)
 
 	# Set the initial state
 	change_state("idle")
@@ -127,7 +128,7 @@ func _input(event): #Called when there is an input event.
 		current_state.on_input_up()
 
 
-func change_state(new_state) -> void:
+func change_state(new_state):
 	if new_state not in player_states:
 		print("Error: State not found")
 		return
@@ -153,10 +154,10 @@ func change_state(new_state) -> void:
 	is_transitioning = false
 
 
-func powaaa(direction, force) -> void:
+func powaaa(direction, force):
 	other_velocity = direction.normalized() * force #multiply the direction vector by the force to get the force vector and set is as velocity
 
-func whole_velocity() -> Vector2:
+func whole_velocity():
 	return velocity + movement_velocity + other_velocity #return the sum of all velocitys so we can use it to check for whole velocity
 
 #todo: make a change state function where you can define a parent state like grounded or air

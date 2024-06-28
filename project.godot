@@ -21,7 +21,7 @@ project/assembly_name="2D Survival Platformer"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/fighters_plugin/plugin.cfg")
 
 [input]
 

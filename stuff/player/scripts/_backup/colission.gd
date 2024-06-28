@@ -1,9 +1,7 @@
-#collision.gd
 extends CollisionShape2D
 
 #this is the collsision script, while not doing anything by itself
 #it handles all the physic stuff and collision checks to not clutter the player script
-#also maybe of note this can be accessed by using "player.collision" idk I just find this very neatly organized :)
 
 var player: CharacterBody2D
 
@@ -52,7 +50,8 @@ func _ready():
     #other
     ray_jump_buffer = _create_ray("jump_buffer", Vector2(0, shape_size.y/2), Vector2(0, player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH))
 
-func _create_ray(ray_name: String, start_pos: Vector2, end_pos: Vector2) -> RayCast2D:
+
+func _create_ray(ray_name: String, start_pos: Vector2, end_pos: Vector2) -> RayCast2D :
     print("creating ray: ", ray_name)
     var ray = RayCast2D.new()
     ray.name = ray_name
@@ -68,16 +67,15 @@ func _create_ray(ray_name: String, start_pos: Vector2, end_pos: Vector2) -> RayC
     return ray
 
 
-
 #floor stuff
 func is_touching_ground() -> bool:
     #we might want to change this at a later point to exclude the velocity check but for now it's good like this
     var touching_ground = (ray_feet_left.is_colliding() or ray_feet_center.is_colliding() or ray_feet_right.is_colliding())
-    return touching_ground and player.whole_velocity().y >= 0
+    return touching_ground and player.whole_velocity().y >= 0 
 
 
 #Ceiling stuff
-func change_enabled_rays_head(enabled: bool) -> void: #we only need the head rays while the player is going up so we can disable it while either not chnaging height or going down
+func change_enabled_rays_head(enabled: bool): #we only need the head rays while the player is going up so we can disable it while either not chnaging height or going down
     ray_head_left.enabled = enabled
     ray_head_center.enabled = enabled
     ray_head_right.enabled = enabled
@@ -118,15 +116,15 @@ func get_wall_direction() -> int:
 
 
 #jump buffer stuff
-func change_enabled_jump_buffer(enabled: bool) -> void: #the jump buffer is only needed when the player is falling
+func change_enabled_jump_buffer(enabled: bool): #the jump buffer is only needed when the player is falling
     ray_jump_buffer.enabled = enabled
 
-func jump_buffer_update_length() -> void:
+func jump_buffer_update_length():
     #TODO: maybe this calculation should get a seccond look at some point but for now it works, the question is if it makes sense
     ray_jump_buffer.target_position.y = (player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH/player.JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER) * player.whole_velocity().y
     ray_jump_buffer.force_raycast_update()
 
-func did_jump_buffer_hit() -> bool:
+func did_jump_buffer_hit():
     ray_jump_buffer.force_raycast_update()
     return ray_jump_buffer.is_colliding()
 

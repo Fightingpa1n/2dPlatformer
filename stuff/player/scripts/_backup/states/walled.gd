@@ -7,7 +7,7 @@ class_name State_Walled
 var wall_direction: int = 0 #0 = none/both, 1 = right -1 = left
 
 func enter(): #on entering t
-	player.velocity.y = 0.0
+	player.velocity.y = 0.0	
 	wall_direction = player.collision.get_wall_direction()
 
 	#reset some variables
