@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cy74cg6xchpq"
-path="res://.godot/imported/fighter.png-7d76cae500cb8648e0a117f62cf62943.ctex"
+uid="uid://88jbgj7gy0t6"
+path="res://.godot/imported/fighter_realistic.png-4b271359fa2df70b169d69d8b3e6c849.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://stuff/player/fighter.png"
-dest_files=["res://.godot/imported/fighter.png-7d76cae500cb8648e0a117f62cf62943.ctex"]
+source_file="res://stuff/player/fighter_realistic.png"
+dest_files=["res://.godot/imported/fighter_realistic.png-4b271359fa2df70b169d69d8b3e6c849.ctex"]
 
 [params]
 
