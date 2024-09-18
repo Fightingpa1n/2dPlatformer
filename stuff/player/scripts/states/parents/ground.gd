@@ -1,5 +1,5 @@
 #states/parents/ground.gd
-extends GrandParentState
+extends PlayerState
 class_name ParentState_Ground
 
 #The Parentstate for any Grounded States meaning the way how physics work on ground is defined here

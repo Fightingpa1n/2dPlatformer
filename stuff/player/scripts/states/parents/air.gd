@@ -1,5 +1,5 @@
 #states/parents/air.gd
-extends GrandParentState
+extends PlayerState
 class_name ParentState_Air
 
 #The Parentstate for any Air States meaning the way how physics work in the air is defined here
