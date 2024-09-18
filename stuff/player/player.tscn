@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bwxbyv5so6cwd"]
 
 [ext_resource type="Script" path="res://stuff/player/scripts/controller.gd" id="1_3ffxd"]
-[ext_resource type="Texture2D" uid="uid://xv1iewpa4gir" path="res://stuff/player/fighter.png" id="2_r82kv"]
+[ext_resource type="Texture2D" uid="uid://bdoo4oyvyf76a" path="res://stuff/player/fighter.png" id="2_r82kv"]
 [ext_resource type="Script" path="res://stuff/player/scripts/colission.gd" id="3_e58m7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_srcfd"]

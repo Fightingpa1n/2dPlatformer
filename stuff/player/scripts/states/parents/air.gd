@@ -10,16 +10,16 @@ func normal_process(delta):
 
 
 func wall_check():
-    pass
-    #if player.collision.is_touching_wall():
-        #var wall_direction = player.collision.get_wall_direction()
-        #if moving away from wall, return. or in other words if the player velocity is not towards the wall, return
-        #if sign(player.whole_velocity().x) != wall_direction:
-            #return
 
-        #if Input.get_axis("left", "right") == wall_direction:
-            #player.change_state("walled")
-    
+    if player.collision.is_touching_wall():
+        var wall_direction = player.collision.get_wall_direction()
+        #if moving away from wall, return. or in other words if the player velocity is not towards the wall, return
+        if sign(player.whole_velocity().x) != wall_direction:
+            return
+        
+        #instead of using left and right let's use the movevent verctor :D
+        if player.movement_velocity.x != 0 and player.movement_velocity.x != wall_direction:
+            player.change_state("walled")
 
 func ground_check(): #a recyclable function for checking the ground
     if player.collision.is_touching_ground():

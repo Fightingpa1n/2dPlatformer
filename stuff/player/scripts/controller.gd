@@ -30,14 +30,16 @@ extends CharacterBody2D
 @export var EXTRA_JUMPS = 1 #the amount of extra jumps the player can do (0 = no extra jumps)
 
 @export_group("Wall Settings")
-@export var WALL_SLIDE_SPEED = 100.0
-@export var WALL_SLIDE_SPEED_FAST = 150.0
-@export var WALL_SLIDE_SPEED_SLOW = 50.0
-@export var WALL_SLIDE_ACCELERATION = 3600.0
-@export var WALL_SLIDE_DECELERATION = 3600.0
+@export var WALL_SLIDE_SPEED:float = 100.0
+@export var WALL_SLIDE_SPEED_FAST:float = 150.0
+@export var WALL_SLIDE_SPEED_SLOW:float = 50.0
+@export var WALL_SLIDE_ACCELERATION:float = 3600.0
+@export var WALL_SLIDE_DECELERATION:float = 3600.0
+@export_subgroup("Reset Settings")
+@export var RESET_JUMP_COUNTER_ON_WALL:bool = false
 @export_subgroup("Wall Jump Settings")
-@export var WALL_JUMP_FORCE = 400.0
-@export var WALL_JUMP_DIRECTION = Vector2(-1, -1) #in this value persumes that the wall is on the left and the player is jumping right
+@export var WALL_JUMP_FORCE:float = 400.0
+@export var WALL_JUMP_DIRECTION:Vector2 = Vector2(-1, -1) #in this value persumes that the wall is on the left and the player is jumping right
 
 @export_group("Raycast Settings")
 @export var CEILING_RAYCAST_LENGTH = 2.5 #the length of the raycast for the ceiling check
@@ -86,6 +88,7 @@ func _ready():
 	player_states["fall"] = State_Fall.new(self)
 	player_states["fast_fall"] = State_FastFall.new(self)
 	player_states["jump"] = State_Jump.new(self)
+	player_states["walled"] = State_Walled.new(self)
 
 	# Set the initial state
 	change_state("idle")
@@ -129,7 +132,7 @@ func _input(event): #Called when there is an input event.
 
 func change_state(new_state) -> void:
 	if new_state not in player_states:
-		print("Error: State not found")
+		printerr("Error: State not found: " + new_state)
 		return
 
 	state_queue.append(new_state)
@@ -148,7 +151,7 @@ func change_state(new_state) -> void:
 		current_state = player_states[next_state]
 		current_state_name = next_state
 		current_state.enter()
-		print("Entering state: " + player_states.find_key(current_state))
+		#print("Entering state: " + player_states.find_key(current_state))
 
 	is_transitioning = false
 

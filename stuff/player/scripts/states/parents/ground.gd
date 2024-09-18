@@ -14,9 +14,6 @@ func enter():
 		print("jumped from the buffer")
 		player.change_state("jump")
 
-func physics_process(_delta):
-	pass
-
 func ground_check(): #checks for ground
 	if not player.collision.is_touching_ground():
 		player.change_state("fall")
