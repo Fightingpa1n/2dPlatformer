@@ -14,7 +14,7 @@ func wall_check():
     if player.collision.is_touching_wall():
         var wall_direction = player.collision.get_wall_direction()
         #if moving away from wall, return. or in other words if the player velocity is not towards the wall, return
-        if sign(player.whole_velocity().x) != wall_direction:
+        if sign(player.total_velocity().x) != wall_direction:
             return
         
         #instead of using left and right let's use the movevent verctor :D

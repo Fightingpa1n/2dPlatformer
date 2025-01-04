@@ -5,7 +5,7 @@ class_name PlayerState
 #the parent state for all player states!
 
 #================ INIT ================#
-var player #Player reference
+var player: CharacterBody2D #Player reference
 func _init(me_the_player: CharacterBody2D) -> void: #init function
 	player = me_the_player
 

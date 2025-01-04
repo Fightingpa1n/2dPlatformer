@@ -20,13 +20,13 @@ func physics_process(delta):
 	if Input.is_action_pressed("down"):
 		player.velocity.y = move_toward(player.velocity.y, player.FASTFALL_SPEED, player.FASTFALL_ACCELERATION * delta)
 
-		if player.whole_velocity().y > 0:
+		if player.total_velocity().y > 0:
 			player.change_state("fast_fall")
 
 	else:
 		player.velocity.y = move_toward(player.velocity.y, player.FALL_SPEED, player.FALL_ACCELERATION * delta)
 
-		if player.whole_velocity().y > 0:
+		if player.total_velocity().y > 0:
 			player.change_state("fall")
 
 

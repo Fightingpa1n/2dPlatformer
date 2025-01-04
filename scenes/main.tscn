@@ -1,10 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://8pohbop7anw5"]
+[gd_scene load_steps=5 format=3 uid="uid://8pohbop7anw5"]
 
 [ext_resource type="TileSet" uid="uid://c8e5w8s7057cs" path="res://assets/tilesets/tiles.tres" id="1_aahoq"]
 [ext_resource type="PackedScene" uid="uid://bwxbyv5so6cwd" path="res://stuff/player/player.tscn" id="2_m225d"]
-[ext_resource type="PackedScene" uid="uid://b8jvp56m3ssuw" path="res://scenes/ui.tscn" id="5_jfvgk"]
+[ext_resource type="Script" path="res://stuff/camera.gd" id="3_2y5b7"]
+[ext_resource type="PackedScene" uid="uid://djqttp6l4l42i" path="res://ui/ui.tscn" id="4_j2btv"]
 
-[node name="Root2D" type="Node2D"]
+[node name="Main" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource("1_aahoq")
@@ -16,6 +17,7 @@ unique_name_in_owner = true
 position = Vector2(-15, -38)
 
 [node name="MainCamera" type="Camera2D" parent="Player"]
-zoom = Vector2(3.19, 3.19)
+unique_name_in_owner = true
+script = ExtResource("3_2y5b7")
 
-[node name="UI" parent="." instance=ExtResource("5_jfvgk")]
+[node name="Ui" parent="Player/MainCamera" instance=ExtResource("4_j2btv")]

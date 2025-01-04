@@ -1,0 +1,188 @@
+[gd_scene load_steps=5 format=3 uid="uid://y1cc16c1ru1p"]
+
+[ext_resource type="Script" path="res://stuff/player/scripts/player_debug.gd" id="1_y2jn4"]
+[ext_resource type="Script" path="res://debug/debug_draw.gd" id="2_xbk3i"]
+[ext_resource type="Texture2D" uid="uid://mukdewetxe54" path="res://addons/fighters_plugin/assets/expand_button/collapse.svg" id="3_4e3jc"]
+[ext_resource type="Texture2D" uid="uid://bfsb1b7bsicpx" path="res://addons/fighters_plugin/assets/expand_button/expand.svg" id="4_sgtn2"]
+
+[node name="debug" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+
+[node name="draw" type="Control" parent="."]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 752.0
+offset_right = 1152.0
+offset_bottom = 524.0
+script = ExtResource("2_xbk3i")
+
+[node name="window" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_bottom = 524.0
+grow_horizontal = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_y2jn4")
+
+[node name="container" type="VBoxContainer" parent="window"]
+layout_mode = 2
+
+[node name="debug_expand" type="Button" parent="window/container"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 9
+focus_mode = 0
+icon = ExtResource("3_4e3jc")
+icon_alignment = 2
+expand_icon = true
+
+[node name="scroll" type="ScrollContainer" parent="window/container"]
+custom_minimum_size = Vector2(400, 500)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="flex" type="HFlowContainer" parent="window/container/scroll"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="container" type="VBoxContainer" parent="window/container/scroll/flex"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="player_expand" type="Button" parent="window/container/scroll/flex/container"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 9
+focus_mode = 0
+icon = ExtResource("3_4e3jc")
+icon_alignment = 2
+expand_icon = true
+
+[node name="player" type="VBoxContainer" parent="window/container/scroll/flex/container"]
+layout_mode = 2
+
+[node name="states" type="VBoxContainer" parent="window/container/scroll/flex/container/player"]
+layout_mode = 2
+
+[node name="current" type="Label" parent="window/container/scroll/flex/container/player/states"]
+layout_mode = 2
+text = "state: "
+
+[node name="HSeparator" type="HSeparator" parent="window/container/scroll/flex/container/player"]
+layout_mode = 2
+
+[node name="velocity" type="VBoxContainer" parent="window/container/scroll/flex/container/player"]
+layout_mode = 2
+
+[node name="velocity" type="Label" parent="window/container/scroll/flex/container/player/velocity"]
+layout_mode = 2
+text = "velocity"
+
+[node name="move" type="Label" parent="window/container/scroll/flex/container/player/velocity"]
+layout_mode = 2
+text = "move"
+
+[node name="other" type="Label" parent="window/container/scroll/flex/container/player/velocity"]
+layout_mode = 2
+text = "other"
+
+[node name="total" type="Label" parent="window/container/scroll/flex/container/player/velocity"]
+layout_mode = 2
+text = "total"
+
+[node name="player_settings_button" type="Button" parent="window/container/scroll/flex/container/player"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 9
+focus_mode = 0
+icon = ExtResource("4_sgtn2")
+icon_alignment = 2
+expand_icon = true
+
+[node name="player_settings" type="VBoxContainer" parent="window/container/scroll/flex/container/player"]
+visible = false
+layout_mode = 2
+
+[node name="title" type="Label" parent="window/container/scroll/flex/container/player/player_settings"]
+layout_mode = 2
+text = "Player Settings:"
+
+[node name="simple" type="CheckBox" parent="window/container/scroll/flex/container/player/player_settings"]
+layout_mode = 2
+focus_mode = 0
+text = "Simple Velocity"
+
+[node name="absolute" type="CheckBox" parent="window/container/scroll/flex/container/player/player_settings"]
+layout_mode = 2
+focus_mode = 0
+text = "Absolue Velocitys"
+
+[node name="shorten" type="CheckBox" parent="window/container/scroll/flex/container/player/player_settings"]
+layout_mode = 2
+focus_mode = 0
+text = "Shorten Velocity"
+
+[node name="debug_settings_expand" type="Button" parent="window/container/scroll/flex/container"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 9
+focus_mode = 0
+icon = ExtResource("4_sgtn2")
+icon_alignment = 2
+expand_icon = true
+
+[node name="debug_settings" type="VBoxContainer" parent="window/container/scroll/flex/container"]
+visible = false
+layout_mode = 2
+
+[node name="title" type="Label" parent="window/container/scroll/flex/container/debug_settings"]
+layout_mode = 2
+text = "Debug Settings:"
+
+[node name="advanced" type="CheckBox" parent="window/container/scroll/flex/container/debug_settings"]
+layout_mode = 2
+focus_mode = 0
+button_pressed = true
+text = "Advanced Debug"
+
+[node name="draw" type="CheckBox" parent="window/container/scroll/flex/container/debug_settings"]
+layout_mode = 2
+focus_mode = 0
+button_pressed = true
+text = "Draw Debug Stuff"
+
+[node name="draw_settings_expand" type="Button" parent="window/container/scroll/flex/container/debug_settings"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 9
+focus_mode = 0
+icon = ExtResource("4_sgtn2")
+icon_alignment = 2
+expand_icon = true
+
+[node name="draw_settings" type="VBoxContainer" parent="window/container/scroll/flex/container/debug_settings"]
+visible = false
+layout_mode = 2
+
+[node name="title" type="Label" parent="window/container/scroll/flex/container/debug_settings/draw_settings"]
+layout_mode = 2
+text = "Draw Settings:"
+
+[node name="world" type="CheckBox" parent="window/container/scroll/flex/container/debug_settings/draw_settings"]
+layout_mode = 2
+focus_mode = 0
+button_pressed = true
+text = "World Root"

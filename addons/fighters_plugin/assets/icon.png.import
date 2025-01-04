@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dljts0puiecu7"
-path="res://.godot/imported/TestPlayer.png-a6f5d97f550df68b5c4c9bc697c924bd.ctex"
+uid="uid://dm58a10x6dgwo"
+path="res://.godot/imported/icon.png-bbf0ec7d91562a0e413242c482cbe5e0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://debug/TestPlayer.png"
-dest_files=["res://.godot/imported/TestPlayer.png-a6f5d97f550df68b5c4c9bc697c924bd.ctex"]
+source_file="res://addons/fighters_plugin/assets/icon.png"
+dest_files=["res://.godot/imported/icon.png-bbf0ec7d91562a0e413242c482cbe5e0.ctex"]
 
 [params]
 

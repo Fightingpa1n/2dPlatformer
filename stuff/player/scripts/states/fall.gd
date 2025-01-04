@@ -20,7 +20,7 @@ func physics_process(delta):
     move(delta) #while falling we are allowed to move
     ground_check()
 
-    if player.whole_velocity().y < 0:
+    if player.total_velocity().y < 0:
         player.change_state("ascend")
 
 func on_input_jump():

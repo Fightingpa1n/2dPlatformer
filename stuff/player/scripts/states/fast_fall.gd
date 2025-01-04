@@ -15,7 +15,7 @@ func physics_process(delta):
     ground_check()
     wall_check()
 
-    if player.whole_velocity().y < 0:
+    if player.total_velocity().y < 0:
         player.change_state("ascend")
     
 

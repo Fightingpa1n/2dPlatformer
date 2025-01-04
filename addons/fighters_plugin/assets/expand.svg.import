@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://23h8modx8wsf"
-path="res://.godot/imported/fighter.png-7d76cae500cb8648e0a117f62cf62943.ctex"
+uid="uid://bfsb1b7bsicpx"
+path="res://.godot/imported/expand.svg-a19ed03817337137e526cdd45bba0391.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://stuff/player/fighter.png"
-dest_files=["res://.godot/imported/fighter.png-7d76cae500cb8648e0a117f62cf62943.ctex"]
+source_file="res://addons/fighters_plugin/assets/expand.svg"
+dest_files=["res://.godot/imported/expand.svg-a19ed03817337137e526cdd45bba0391.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

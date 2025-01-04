@@ -14,7 +14,7 @@ func physics_process(delta):
         
     physics_deceleration(player.GROUND_DECELERATION, delta) #general deceleration
 
-    if player.whole_velocity().x == 0:
+    if player.total_velocity().x == 0:
         player.change_state("idle")
     
 

@@ -3,7 +3,7 @@ extends CharacterBody2D
 
 #this is the main Player Controller script containing values, functions and being responsible for the state machine
 
-#=== constant values ===
+#=== constant values ===#
 @export_category("Player Settings")
 @export_group("Physics Settings")
 @export var FALL_SPEED = 500.0 #the speed the player falls at (at a maximum)
@@ -57,7 +57,7 @@ extends CharacterBody2D
 @export_subgroup("coyote_time")
 @export var COYOTE_TIME = 0.1
 
-#=== player variables ===
+#=== player variables ===#
 var movement_velocity = Vector2() #the velocity for movement
 var other_velocity = Vector2() #the velocity for other stuff like powaaa
 var jump_time = 0.0
@@ -65,22 +65,22 @@ var buffer_jump = false
 var coyote_time_time= 0.0
 var jump_counter = 0
 
-
-#=== private variables ===
+#=== private variables ===#
 var current_state: PlayerState = null
 var current_state_name = ""
 var player_states = {}
 var state_queue = []
 var is_transitioning = false
-var collision: CollisionShape2D
-var _ui #for testing
 
+@onready var collision: CollisionShape2D = %collision
+@onready var debug: Control = %debug
+
+#=== debug signals ===#
+signal state_change(state_name:String)
+signal velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
+signal pre_process_velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
 
 func _ready():
-	collision = $collision
-
-	_ui = get_node("../UI") #for testing
-
 	# Initialize all states
 	player_states["idle"] = State_Idle.new(self)
 	player_states["walk"] = State_Walk.new(self)
@@ -90,19 +90,20 @@ func _ready():
 	player_states["jump"] = State_Jump.new(self)
 	player_states["walled"] = State_Walled.new(self)
 
-	# Set the initial state
-	change_state("idle")
+	change_state("idle") #set inital state
 
 func _physics_process(delta):
-	#we split the velocity into mutliple vectors to make it easier with multiple velocity sources clashing with each other
+	#NOTE: we split the velocity into mutliple vectors to make it easier with multiple velocity sources clashing with each other
 
-	#subtract the additinal velocitys
+	#subtract the different velocitys from the main velocity
 	velocity -= movement_velocity
 	velocity -= other_velocity
 
-	_ui.update_debug_ui(current_state_name, velocity, movement_velocity, other_velocity, whole_velocity())
-	
+	emit_signal("pre_process_velocity_update", velocity, movement_velocity, other_velocity) #emit current velocity
+
 	current_state.physics_process(delta)
+
+	emit_signal("velocity_update", velocity, movement_velocity, other_velocity) #emit current velocity
 
 	#readd the different velocitie stuff.
 	velocity += movement_velocity
@@ -151,15 +152,14 @@ func change_state(new_state) -> void:
 		current_state = player_states[next_state]
 		current_state_name = next_state
 		current_state.enter()
-		#print("Entering state: " + player_states.find_key(current_state))
-
+		emit_signal("state_change", current_state_name)
+	
 	is_transitioning = false
-
 
 func powaaa(direction, force) -> void:
 	other_velocity = direction.normalized() * force #multiply the direction vector by the force to get the force vector and set is as velocity
 
-func whole_velocity() -> Vector2:
+func total_velocity() -> Vector2:
 	return velocity + movement_velocity + other_velocity #return the sum of all velocitys so we can use it to check for whole velocity
 
 #todo: make a change state function where you can define a parent state like grounded or air

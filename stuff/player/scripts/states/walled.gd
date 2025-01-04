@@ -15,11 +15,11 @@ func physics_process(delta) -> void:
     player.velocity.y = move_toward(player.velocity.y, slide_speed, player.WALL_SLIDE_ACCELERATION * delta)
 
 
-func on_input_jump() -> void:
-    #if we jump we wanna do a wall jump
-    pass
+func on_input_jump() -> void: #jump while on wall -> wall jump
+    #change WALL_JUMP_DIRECTION Depending on the wall direction
 
-
+    var wall_jump_direction = Vector2(-wall_direction, -1)
+    player.debug.set_direction_target(wall_jump_direction)
 
 func on_input_left_right(movement: float) -> void:
     #if we move away from the wall we want to leave this state
