@@ -1,3 +1,49 @@
-[gd_scene format=3 uid="uid://djqttp6l4l42i"]
+[gd_scene load_steps=6 format=3 uid="uid://djqttp6l4l42i"]
+
+[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_root.gd" id="1_jj0be"]
+[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_window.gd" id="2_k6b7l"]
+[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_value.gd" id="3_xjk6s"]
+[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_container.gd" id="4_j0ll5"]
+[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_colapsable.gd" id="5_h0w1a"]
 
 [node name="Ui" type="CanvasLayer"]
+
+[node name="DebugRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jj0be")
+
+[node name="DebugWindow" type="PanelContainer" parent="DebugRoot"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+script = ExtResource("2_k6b7l")
+WINDOW_ANCHOR = 1
+WINDOW_HEIGHT = 200
+WINDOW_WIDTH = 200
+
+[node name="DebugContainer" type="VBoxContainer" parent="DebugRoot/DebugWindow"]
+layout_mode = 2
+script = ExtResource("4_j0ll5")
+
+[node name="value_key" type="Label" parent="DebugRoot/DebugWindow/DebugContainer"]
+layout_mode = 2
+text = "Value: string"
+script = ExtResource("3_xjk6s")
+
+[node name="DebugColapsable" type="VBoxContainer" parent="DebugRoot/DebugWindow/DebugContainer"]
+layout_mode = 2
+script = ExtResource("5_h0w1a")
+EXPANDED = true
+
+[node name="value_key" type="Label" parent="DebugRoot/DebugWindow/DebugContainer/DebugColapsable"]
+layout_mode = 2
+text = "Value: string"
+script = ExtResource("3_xjk6s")

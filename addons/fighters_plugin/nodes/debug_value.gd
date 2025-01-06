@@ -4,9 +4,14 @@ class_name DebugValue
 
 enum ValueType {STRING, INT, FLOAT, BOOL, VECTOR2, VECTOR3}
 
-@export var NAME:String = "":
+@export var LABEL:String = "Value":
     set(value):
-        NAME = value
+        LABEL = value
+        _update()
+
+@export var KEY:String = "value_key":
+    set(value):
+        KEY = _key(value)
         _update()
 
 @export var VALUE_TYPE:ValueType = ValueType.STRING:
@@ -14,32 +19,35 @@ enum ValueType {STRING, INT, FLOAT, BOOL, VECTOR2, VECTOR3}
         VALUE_TYPE = value
         _update()
 
-var label:String = ""
-var value
-var _alteration:Callable
+var _label:String = ""
 
 func _enter_tree():
     _update()
 
+func _key(name) -> String:
+    return name.to_lower().replace(" ", "_")
+
 func _update():
-    label = NAME + ": " #set label
+    name=KEY
+    _label = LABEL + ": " #set label
     match VALUE_TYPE:
         ValueType.STRING:
-            text = label + "string"
+            text = _label + "string"
         ValueType.INT:
-            text = label + "int"
+            text = _label + "int"
         ValueType.FLOAT:
-            text = label + "float"
+            text = _label + "float"
         ValueType.BOOL:
-            text = label+ "bool"
+            text = _label+ "bool"
         ValueType.VECTOR2:
-            text = label+"vector2"
+            text = _label+"vector2"
         ValueType.VECTOR3:
-            text = label+"vector3"
+            text = _label+"vector3"
 
-func update(value):
-    value = _alteration.call(value) if _alteration else value
-    text = label + str(value)
+func update(value, debug_settings): 
+    text = _label + str(value)
 
-func alter(alteration:Callable):
-    _alteration = alteration
+func set_value(value): #set the value
+    update(value, null)
+
+#also if you want to change the value you can 

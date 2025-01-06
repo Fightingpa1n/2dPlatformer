@@ -14,10 +14,12 @@ func _enter_tree():
 	# Gets the directory icon for loading a resource in the Inspector
 	#var gui = get_editor_interface().get_base_control()
 	#var load_icon = gui.get_icon("Load", "EditorIcons")
-
-	add_custom_type("Extend_Button", "Button", preload("nodes/expand_button.gd"), preload("assets/expand_button/icon.png"))
-	add_custom_type("DebugRoot", "Control", preload("nodes/debug_root.gd"), preload("assets/expand_button/icon.png"))
-	add_custom_type("DebugWindow", "DebugRoot", preload("nodes/debug_window.gd"), preload("assets/expand_button/icon.png"))
+	
+	add_custom_type("DebugRoot", "Control", preload("nodes/debug_root.gd"), preload("assets/icon.png"))
+	add_custom_type("DebugWindow", "DebugRoot", preload("nodes/debug_window.gd"), preload("assets/icon.png"))
+	add_custom_type("DebugContainer", "DebugWindow", preload("nodes/debug_container.gd"), preload("assets/icon.png"))
+	add_custom_type("DebugColapsable", "DebugContainer", preload("nodes/debug_colapsable.gd"), preload("assets/icon.png"))
+	add_custom_type("DebugValue", "DebugWindow", preload("nodes/debug_value.gd"), preload("assets/icon.png"))
 
 	pass
 
@@ -27,11 +29,13 @@ func _exit_tree():
 	git.queue_free()
 	remove_tool_menu_item("Reload Plugins")
 
-	remove_custom_type("Extend_Button")
 	remove_custom_type("DebugRoot")
 	remove_custom_type("DebugWindow")
-	pass
+	remove_custom_type("DebugContainer")
+	remove_custom_type("DebugColapsable")
+	remove_custom_type("DebugValue")
 
+	pass
 
 
 func reloadPlugins():
