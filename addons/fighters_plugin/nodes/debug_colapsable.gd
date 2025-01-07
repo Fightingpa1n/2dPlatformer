@@ -2,48 +2,49 @@
 extends DebugContainer
 class_name DebugColapsable
 
-@export var EXPANDED: bool = false:
-	set(value):
-		EXPANDED = value
-		_update()
+var title:String
+var expanded:bool
 
-@export var TITLE: String = "":
-	set(value):
-		TITLE = value
-		_update()
+var _toggle_button:Button
+var expand_ico:Texture = preload("../assets/expand.svg")
+var collapse_ico:Texture = preload("../assets/collapse.svg")
 
-var toggle_button: Button
-var expand_ico: Texture = preload("../assets/expand.svg")
-var collapse_ico: Texture = preload("../assets/collapse.svg")
+func _init(key:String, title:String, expanded:bool) -> void:
+	super._init(key)
+	self.title = title
+	self.expanded = expanded
 
 func _ready():
-	# Ensure the button is set up when the node enters the scene
-	_setup_button()
 	_update()
 
-func _setup_button():
-	if not toggle_button:
-		toggle_button = Button.new()
-		toggle_button.text = TITLE
-		toggle_button.icon = expand_ico
-		toggle_button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		toggle_button.size_flags_horizontal = SIZE_FILL | SIZE_SHRINK_END
-		toggle_button.custom_minimum_size = Vector2(20, 20)
-		toggle_button.toggle_mode = false
-		toggle_button.focus_mode = Control.FOCUS_NONE # Disable focus
-		toggle_button.connect("pressed", _toggle_expand) # Correct signal
-		add_child(toggle_button, false, INTERNAL_MODE_FRONT)
+func _button_setup():
+	if _toggle_button: return #return if exists
+
+	#Create the toggle button
+	_toggle_button = Button.new()
+	_toggle_button.text = title
+	_toggle_button.icon = expand_ico
+	_toggle_button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_toggle_button.size_flags_horizontal = SIZE_FILL | SIZE_SHRINK_END
+	_toggle_button.custom_minimum_size = Vector2(20, 20)
+	_toggle_button.toggle_mode = false
+	_toggle_button.focus_mode = Control.FOCUS_NONE # Disable focus
+	_toggle_button.connect("pressed", _toggle_expand) # Correct signal
+	add_child(_toggle_button, false, INTERNAL_MODE_FRONT)
+
+
 func _update():
 	# Update button text and icon
-	toggle_button.text = TITLE
-	toggle_button.icon = collapse_ico if EXPANDED else expand_ico
+	_button_setup()
+	_toggle_button.text = title
+	_toggle_button.icon = collapse_ico if expanded else expand_ico
 
-	# Show or hide child nodes based on EXPANDED
+	# Show or hide child nodes based on expanded
 	for child in get_children():
-		if child != toggle_button:
-			child.visible = EXPANDED
+		if child != _toggle_button:
+			child.visible = expanded
 
 func _toggle_expand():
 	# Toggle the EXPANDED state and update
-	EXPANDED = not EXPANDED
+	expanded = not expanded
 	_update()

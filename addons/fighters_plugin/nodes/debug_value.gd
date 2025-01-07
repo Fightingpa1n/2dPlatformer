@@ -21,7 +21,7 @@ enum ValueType {STRING, INT, FLOAT, BOOL, VECTOR2, VECTOR3}
 
 var _label:String = ""
 
-func _enter_tree():
+func _ready():
     _update()
 
 func _key(name) -> String:
