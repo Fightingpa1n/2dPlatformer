@@ -8,13 +8,10 @@ var expanded:bool
 var _toggle_button:Button
 var expand_ico:Texture = preload("../assets/expand.svg")
 var collapse_ico:Texture = preload("../assets/collapse.svg")
-
-func _init(key:String, title:String, expanded:bool) -> void:
-	super._init(key)
-	self.title = title
-	self.expanded = expanded
+var button_size:float = 20
 
 func _ready():
+	super._ready()
 	_update()
 
 func _button_setup():
@@ -26,7 +23,7 @@ func _button_setup():
 	_toggle_button.icon = expand_ico
 	_toggle_button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_toggle_button.size_flags_horizontal = SIZE_FILL | SIZE_SHRINK_END
-	_toggle_button.custom_minimum_size = Vector2(20, 20)
+	_toggle_button.custom_minimum_size = Vector2(button_size, button_size)
 	_toggle_button.toggle_mode = false
 	_toggle_button.focus_mode = Control.FOCUS_NONE # Disable focus
 	_toggle_button.connect("pressed", _toggle_expand) # Correct signal

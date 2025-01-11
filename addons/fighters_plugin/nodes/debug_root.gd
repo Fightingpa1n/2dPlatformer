@@ -5,12 +5,11 @@ class_name DebugRoot
 var _draw:DebugDraw
 var _debug_window:DebugWindow
 
-func _init():
+func _enter_tree():
     _debug_window = DebugWindow.new()
     _draw = DebugDraw.new()
     add_child(_debug_window)
     add_child(_draw)
-
 
 func _ready():
     #Anchor points

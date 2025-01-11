@@ -67,10 +67,9 @@ class_name DebugWindow
 #     offset_top = 0.0
 #     offset_bottom = 0.0
 
-var debug_root:DebugRoot #the root container of the debug window
-var _window_container:DebugContainer #the root container of the window
+@onready var debug_root:DebugRoot = get_parent() #the root container of the debug window
 
-var values = {} #the values dictionary
+var _window_container:DebugContainer #the root container of the window
 
 func _ready():
     var parent = get_parent() #get the parent
@@ -81,5 +80,7 @@ func _ready():
     else: #unknown parent
         printerr("DebugWindow: Unknown parent type: " + str(parent))
 
+var values = {} #the values dictionary
 func _on_values_updated(): #called when the values are updated
+    print("Updting values")
     values = _window_container.get_values() #get the values from the window container

@@ -4,50 +4,45 @@ class_name DebugValue
 
 enum ValueType {STRING, INT, FLOAT, BOOL, VECTOR2, VECTOR3}
 
-@export var LABEL:String = "Value":
-    set(value):
-        LABEL = value
-        _update()
+@onready var debug_window = get_parent().debug_window
 
-@export var KEY:String = "value_key":
-    set(value):
-        KEY = _key(value)
-        _update()
+var type:ValueType = ValueType.STRING
 
-@export var VALUE_TYPE:ValueType = ValueType.STRING:
-    set(value):
-        VALUE_TYPE = value
-        _update()
+var label:String = "Value:"
+var key:String = ""
+var value:Variant = null
 
-var _label:String = ""
+func _enter_tree():
+    if not get_parent() is DebugContainer: #check if the parent is a debug container
+        printerr("DebugValue: Parent is not DebugContainer")
 
 func _ready():
-    _update()
+    if not key or key == "": key = label.to_lower().replace(" ", "_")
+    name = key
+    _editor_update()
 
-func _key(name) -> String:
-    return name.to_lower().replace(" ", "_")
-
-func _update():
-    name=KEY
-    _label = LABEL + ": " #set label
-    match VALUE_TYPE:
+func _editor_update(): #update self on changes in editor (used for display changes when stuff in the editor changes aka it's not running yet)
+    match type: #set default value
         ValueType.STRING:
-            text = _label + "string"
+            value = ""
         ValueType.INT:
-            text = _label + "int"
+            value = 0
         ValueType.FLOAT:
-            text = _label + "float"
+            value = 0.0
         ValueType.BOOL:
-            text = _label+ "bool"
+            value = false
         ValueType.VECTOR2:
-            text = _label+"vector2"
+            value = Vector2()
         ValueType.VECTOR3:
-            text = _label+"vector3"
+            value = Vector3()
+    _value_update()
 
-func update(value, debug_settings): 
-    text = _label + str(value)
+func _value_update(): #update text to display current value (used pretty much the whole time)
+    text = label + " " + str(value)
 
-func set_value(value): #set the value
-    update(value, null)
+func update_value(value): #update the value
+    self.value = value
+    _value_update()
 
-#also if you want to change the value you can 
+#the update value function can be overriden to add custom value handling
+
