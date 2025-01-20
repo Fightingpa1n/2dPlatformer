@@ -26,15 +26,26 @@ func get_camera() -> Camera2D:
                 await camera.ready
     return camera
 
-#=== Debug ===#
-var debug:Control #the debug draw script/node
-func get_debug() -> Control:
-    if not debug: #if the debug is not set
+#=== UI ===#
+var ui:CanvasLayer #the ui
+func get_ui() -> CanvasLayer:
+    if not ui: #if the ui is not set
         if await _is_main_ready(): #if the main node is ready
-            debug = main.get_node("debug") #get the debug draw script/node
-            if not debug.is_node_ready():
-                await debug.ready
-    return debug
+            ui = camera.get_node("%UI") #get the ui
+            if not ui.is_node_ready():
+                await ui.ready
+    return ui
+
+# #=== Debug ===#
+# var debug:Control #the debug draw script/node
+# func get_debug() -> Control:
+#     if not debug: #if the debug is not set 
+#         if await _is_main_ready(): #if the main node is ready
+#             debug = (await get_ui()).get_node("%Debug")
+#             if not debug.is_node_ready():
+#                 await debug.ready
+#     return debug
+
 
 #========= Private Functions =========#
 func _is_main_ready() -> bool:

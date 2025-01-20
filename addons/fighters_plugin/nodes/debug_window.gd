@@ -2,85 +2,86 @@
 extends PanelContainer
 class_name DebugWindow
 
+enum AnchorPoint{TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT}
 
-# #=========================== Editor ===========================#
-# enum WindowAnchor { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT }
+var PRESETS = {
+    AnchorPoint.TOP_LEFT: {
+        'anchor_left': 0.0,
+        'anchor_top': 0.0,
+        'anchor_right': 0.0,
+        'anchor_bottom': 0.0,
+        'grow_horizontal': Control.GROW_DIRECTION_END,
+        'grow_vertical': Control.GROW_DIRECTION_END,
+    },
+    AnchorPoint.TOP_RIGHT: {
+        'anchor_left': 1.0,
+        'anchor_top': 0.0,
+        'anchor_right': 1.0,
+        'anchor_bottom': 0.0,
+        'grow_horizontal': Control.GROW_DIRECTION_BEGIN,
+        'grow_vertical': Control.GROW_DIRECTION_END,
+    },
+    AnchorPoint.BOTTOM_LEFT: {
+        'anchor_left': 0.0,
+        'anchor_top': 1.0,
+        'anchor_right': 0.0,
+        'anchor_bottom': 1.0,
+        'grow_horizontal': Control.GROW_DIRECTION_END,
+        'grow_vertical': Control.GROW_DIRECTION_BEGIN,
+    },
+    AnchorPoint.BOTTOM_RIGHT: {
+        'anchor_left': 1.0,
+        'anchor_top': 1.0,
+        'anchor_right': 1.0,
+        'anchor_bottom': 1.0,
+        'grow_horizontal': Control.GROW_DIRECTION_BEGIN,
+        'grow_vertical': Control.GROW_DIRECTION_BEGIN,
+    },
+}
 
-# @export var WINDOW_ANCHOR: WindowAnchor = WindowAnchor.TOP_LEFT:
-#     set(value):
-#         WINDOW_ANCHOR = value
-#         _update()
+#=========================== Editor ===========================#
+@export var show_window:bool = true: #if the window should be shown
+    set(value):
+        show_window = value
+        _editor_update()
 
-# @export var SHOW_WINDOW: bool = true:
-#     set(value):
-#         SHOW_WINDOW = value
-#         _update()
+@export var anchor_point:AnchorPoint = AnchorPoint.TOP_LEFT: #the anchor point of the window
+    set(value):
+        anchor_point = value
+        _editor_update()
+    
+@export var window_height:Vector2 = Vector2(200, 200): #the size of the window
+    set(value):
+        window_height = value
+        _editor_update()
 
-# @export var WINDOW_HEIGHT: int = 200:
-#     set(value):
-#         WINDOW_HEIGHT = value
-#         _update()
-
-# @export var WINDOW_WIDTH: int = 200:
-#     set(value):
-#         WINDOW_WIDTH = value
-#         _update()
-
-# func _enter_tree():
-#     _update()
-
-# func _update():
-#     if SHOW_WINDOW: show()
-#     else: hide()
-
-#     custom_minimum_size = Vector2(WINDOW_WIDTH, WINDOW_HEIGHT)
-
-#     # Set anchor and margin based on WINDOW_ANCHOR
-#     match WINDOW_ANCHOR:
-#         WindowAnchor.TOP_LEFT:
-#             anchor_left = 0.0
-#             anchor_top = 0.0
-#             anchor_right = 0.0
-#             anchor_bottom = 0.0
-#         WindowAnchor.TOP_RIGHT:
-#             anchor_left = 1.0
-#             anchor_top = 0.0
-#             anchor_right = 1.0
-#             anchor_bottom = 0.0
-#         WindowAnchor.BOTTOM_LEFT:
-#             anchor_left = 0.0
-#             anchor_top = 1.0
-#             anchor_right = 0.0
-#             anchor_bottom = 1.0
-#         WindowAnchor.BOTTOM_RIGHT:
-#             anchor_left = 1.0
-#             anchor_top = 1.0
-#             anchor_right = 1.0
-#             anchor_bottom = 1.0
-
-#     # Update the growth direction and offsets
-#     grow_horizontal = Control.GROW_DIRECTION_END if WINDOW_ANCHOR in [WindowAnchor.TOP_LEFT, WindowAnchor.BOTTOM_LEFT] else Control.GROW_DIRECTION_BEGIN
-#     grow_vertical = Control.GROW_DIRECTION_END if WINDOW_ANCHOR in [WindowAnchor.TOP_LEFT, WindowAnchor.TOP_RIGHT] else Control.GROW_DIRECTION_BEGIN
-
-#     offset_left = 0.0
-#     offset_right = 0.0
-#     offset_top = 0.0
-#     offset_bottom = 0.0
 
 @onready var debug_root:DebugRoot = get_parent() #the root container of the debug window
-
-var _window_container:DebugContainer #the root container of the window
-
-func _ready():
-    var parent = get_parent() #get the parent
-    if parent is DebugRoot: #if parent is DebugRoot (aka this is the window root container)
-        debug_root = parent #set the debug_root
-        _window_container = DebugContainer.new() #init the window container
-        add_child(_window_container) #add the window container to the window
-    else: #unknown parent
-        printerr("DebugWindow: Unknown parent type: " + str(parent))
+@onready var _window_container:DebugContainer = get_child(0) #the window container
 
 var values = {} #the values dictionary
+
 func _on_values_updated(): #called when the values are updated
     print("Updting values")
     values = _window_container.get_values() #get the values from the window container
+
+
+func _editor_update(): #update self on changes in editor (used for display changes when stuff in the editor changes aka it's not running yet)
+    visible = show_window #set the visibility of the window
+    
+    custom_minimum_size = window_height #set the size of the window
+
+    anchor_left = PRESETS[anchor_point]['anchor_left']
+    anchor_top = PRESETS[anchor_point]['anchor_top']
+    anchor_right = PRESETS[anchor_point]['anchor_right']
+    anchor_bottom = PRESETS[anchor_point]['anchor_bottom']
+
+    grow_horizontal = PRESETS[anchor_point]['grow_horizontal']
+    grow_vertical = PRESETS[anchor_point]['grow_vertical']
+
+    offset_left = 0.0
+    offset_right = 0.0
+    offset_top = 0.0
+    offset_bottom = 0.0
+
+    _window_container.get_values() #update the values   

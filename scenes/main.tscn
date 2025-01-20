@@ -20,4 +20,5 @@ position = Vector2(-15, -38)
 unique_name_in_owner = true
 script = ExtResource("3_2y5b7")
 
-[node name="Ui" parent="Player/MainCamera" instance=ExtResource("4_j2btv")]
+[node name="UI" parent="Player/MainCamera" instance=ExtResource("4_j2btv")]
+unique_name_in_owner = true

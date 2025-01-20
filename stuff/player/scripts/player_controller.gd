@@ -1,5 +1,7 @@
 #controller.gd
 extends CharacterBody2D
+class_name PlayerController
+
 
 #this is the main Player Controller script containing values, functions and being responsible for the state machine
 
@@ -73,9 +75,9 @@ var state_queue = []
 var is_transitioning = false
 
 @onready var collision: CollisionShape2D = %collision
-@onready var debug: Control = %debug
+# @onready var debug: Control = %debug
 
-#=== debug signals ===#
+#=== debug signals ===# #currrently unused
 signal state_change(state_name:String)
 signal velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
 signal pre_process_velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)

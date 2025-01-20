@@ -10,8 +10,5 @@ func _ready():
     anchor_right = 0.0
     anchor_bottom = 0.0
 
-
-
-
 func _draw():
     pass

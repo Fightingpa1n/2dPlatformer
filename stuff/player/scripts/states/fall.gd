@@ -3,11 +3,12 @@ extends ParentState_Air
 class_name State_Fall
 
 #the fall state is the state where the player is in the air and falling down aka a positive y velocity, I think.
+
 func enter():
-    player.collision.change_enabled_jump_buffer(true)
+    collision.toggle_jump_buffer_ray(true) #enable jump buffer ray
 
 func exit():
-    player.collision.change_enabled_jump_buffer(false)
+    collision.toggle_jump_buffer_ray(false) #disable jump buffer ray
 
 func physics_process(delta):
     wall_check()
@@ -24,9 +25,10 @@ func physics_process(delta):
         player.change_state("ascend")
 
 func on_input_jump():
-    if super():
-        return
-    player.collision.jump_buffer_update_length()
+    if super(): return #cyote jump check from parent
+
+    var new_length = player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH + player.JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER * player.total_velocity().y #calculate lenght based on velocity
+    collision.jump_buffer_update_length(new_length) #update the length of the jump buffer ray
     if player.collision.did_jump_buffer_hit():
 
         #do some ground check here to see if stuff is save to land on 
@@ -36,7 +38,7 @@ func on_input_jump():
             player.buffer_jump = true
             print("buffered jump")
             return
-            
+                
     double_jump()
 
 

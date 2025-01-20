@@ -48,7 +48,3 @@ func ledge_forgivness():
 func on_input_jump():
 	if not super():
 		double_jump()
-
-
-
-

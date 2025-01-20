@@ -5,9 +5,12 @@ class_name PlayerState
 #the parent state for all player states!
 
 #================ INIT ================#
-var player: CharacterBody2D #Player reference
-func _init(me_the_player: CharacterBody2D) -> void: #init function
-	player = me_the_player
+var player: PlayerController #Player reference
+var collision: PlayerCollision #collision reference
+
+func _init(me_the_player: PlayerController) -> void: #init function
+	player = me_the_player #player reference
+	collision = player.collision #collision reference
 
 #================ STATE METHODS ================#
 func enter() -> void: #the enter function is called when the state is entered

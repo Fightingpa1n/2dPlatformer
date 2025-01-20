@@ -8,7 +8,7 @@ var debug_window:DebugWindow
 var key:String #the key of the container
 
 #================= Public =================#
-func _enter_tree():
+func _ready():
     var parent = get_parent() #get the parent
     if parent is DebugContainer:
         debug_root = parent.debug_root
@@ -18,11 +18,8 @@ func _enter_tree():
         debug_window = parent
     else:
         printerr("DebugContainer: Unknown parent type: "+str(parent))
-
-
-func _ready():
+    
     if has_key(): name = key #set name to key if we have a key
-
 
 func has_key(): #check if the container has a key
     if key and key != "": return true
@@ -40,7 +37,7 @@ func get_values() -> Dictionary:
         
         elif is_debug_input(child):
             values[child.key] = child.value #add the value to the values dictionary
-
+            
     return values #return the values dictionary
 
 

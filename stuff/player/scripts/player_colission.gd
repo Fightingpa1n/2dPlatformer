@@ -1,12 +1,14 @@
 #collision.gd
 extends CollisionShape2D
+class_name PlayerCollision
 
 #this is the collsision script, while not doing anything by itself
 #it handles all the physic stuff and collision checks to not clutter the player script
 #also maybe of note this can be accessed by using "player.collision" idk I just find this very neatly organized :)
 
-var player: CharacterBody2D
+@onready var player:PlayerController = get_parent()
 
+#=== raycasts ===#
 var ray_head_left: RayCast2D
 var ray_head_center: RayCast2D
 var ray_head_right: RayCast2D
@@ -23,14 +25,10 @@ var ray_feet_left: RayCast2D
 var ray_feet_center: RayCast2D
 var ray_feet_right: RayCast2D
 
-var ray_jump_buffer: RayCast2D #this buffer is used for jump buffering since in my oppinion it's supperior to the timer normally used for this.
+var ray_jump_buffer: RayCast2D
+
 
 func _ready():
-	player = get_parent()
-	await player.ready
-	init_rays()
-
-func init_rays():
 	var shape_size = shape.size
 
 	#head
@@ -55,7 +53,7 @@ func init_rays():
 	#other
 	ray_jump_buffer = _create_ray("jump_buffer", Vector2(0, shape_size.y/2), Vector2(0, player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH))
 
-func _create_ray(ray_name: String, start_pos: Vector2, end_pos: Vector2) -> RayCast2D:
+func _create_ray(ray_name:String, start_pos:Vector2, end_pos:Vector2) -> RayCast2D: #private function to create a ray
 	#print("creating ray: ", ray_name)
 	var ray = RayCast2D.new()
 	ray.name = ray_name
@@ -71,23 +69,63 @@ func _create_ray(ray_name: String, start_pos: Vector2, end_pos: Vector2) -> RayC
 	return ray
 
 
-#floor stuff
-func is_touching_ground() -> bool:
-	#we might want to change this at a later point to exclude the velocity check but for now it's good like this
-	var touching_ground = (ray_feet_left.is_colliding() or ray_feet_center.is_colliding() or ray_feet_right.is_colliding())
-	return touching_ground and player.total_velocity().y >= 0
+#===== toggle functions =====#
 
-
-#Ceiling stuff
-func change_enabled_rays_head(enabled: bool) -> void: #we only need the head rays while the player is going up so we can disable it while either not chnaging height or going down
+#disable/enable rays
+func toggle_head_rays(enabled:bool) -> void: #toggle the head rays
 	ray_head_left.enabled = enabled
 	ray_head_center.enabled = enabled
 	ray_head_right.enabled = enabled
 
-func is_touching_ceiling() -> bool:
-	if (ray_head_left.is_colliding() or ray_head_right.is_colliding()) and ray_head_center.is_colliding():
-		print("touching ceiling")
+func toggle_right_side_rays(enabled:bool) -> void: #toggle the right side rays
+	ray_side_right_top.enabled = enabled
+	ray_side_right_center.enabled = enabled
+	ray_side_right_bottom.enabled = enabled
+
+func toggle_left_side_rays(enabled:bool) -> void: #toggle the left side rays
+	ray_side_left_top.enabled = enabled
+	ray_side_left_center.enabled = enabled
+	ray_side_left_bottom.enabled = enabled
+
+func toggle_side_rays(enabled:bool) -> void: #toggle all side rays
+	toggle_right_side_rays(enabled)
+	toggle_left_side_rays(enabled)
+
+func toggle_feet_rays(enabled:bool) -> void: #toggle the feet rays
+	ray_feet_left.enabled = enabled
+	ray_feet_center.enabled = enabled
+	ray_feet_right.enabled = enabled
+
+#disable/enable jump buffer
+func toggle_jump_buffer_ray(enabled:bool) -> void: #toggle the jump buffer ray
+	ray_jump_buffer.enabled = enabled
+
+#disable/enable collision
+func toggle_collision(enabled:bool) -> void: #toggle self collision (like if we have collision with ground and stuff)
+	disabled = !enabled
+
+
+#===== collision checks =====#
+func is_touching_ground() -> bool: #this function checks if the player is touching the ground #NOTE: currently we check for velocity too, which is fine, but I just wanna not it incase it causes problems in the future
+	var touching_ground = (ray_feet_left.is_colliding() or ray_feet_center.is_colliding() or ray_feet_right.is_colliding())
+	return touching_ground and player.total_velocity().y >= 0
+
+func is_touching_ceiling() -> bool: #checks if the player is touching the ceiling
 	return (ray_head_left.is_colliding() or ray_head_right.is_colliding()) and ray_head_center.is_colliding()
+
+func is_touching_right_wall() -> bool: #checks if the player is touching a wall with the right side
+	return ray_side_right_top.is_colliding() or ray_side_right_center.is_colliding() or ray_side_right_bottom.is_colliding()
+
+func is_touching_left_wall() -> bool: #checks if the player is touching a wall with the left side
+	return ray_side_left_top.is_colliding() or ray_side_left_center.is_colliding() or ray_side_left_bottom.is_colliding()
+
+func is_touching_wall() -> bool: #checks if the player is touching a wall
+	return is_touching_right_wall() or is_touching_left_wall()
+
+
+
+
+
 
 func return_ceiling_ledge_forgiveness_thingy_idk(): #this function is used for ledge forgivness it will check if ledgeforgivness is applicable and if yes it will return the relevant ray so the actual code can handle the ledgeforgivness
 	if ray_head_left.is_colliding() and not ray_head_center.is_colliding():
@@ -99,14 +137,9 @@ func return_ceiling_ledge_forgiveness_thingy_idk(): #this function is used for l
 	else:
 		return null
 
-
 #Wall stuff
-func is_touching_wall() -> bool:
-	var right_side = ray_side_right_top.is_colliding() or ray_side_right_center.is_colliding() or ray_side_right_bottom.is_colliding()
-	var left_side = ray_side_left_top.is_colliding() or ray_side_left_center.is_colliding() or ray_side_left_bottom.is_colliding()
-	return right_side or left_side
 
-func get_wall_direction() -> int:
+func get_wall_direction() -> int: #this is pretty bad espeshally since it's hardcoded #TODO: make this better
 	var right_side = ray_side_right_top.is_colliding() or ray_side_right_center.is_colliding() or ray_side_right_bottom.is_colliding()
 	var left_side = ray_side_left_top.is_colliding() or ray_side_left_center.is_colliding() or ray_side_left_bottom.is_colliding()
 	if right_side and left_side:
@@ -119,13 +152,10 @@ func get_wall_direction() -> int:
 		return 0
 
 
-#jump buffer stuff
-func change_enabled_jump_buffer(enabled: bool) -> void: #the jump buffer is only needed when the player is falling
-	ray_jump_buffer.enabled = enabled
-
-func jump_buffer_update_length() -> void:
-	#TODO: maybe this calculation should get a seccond look at some point but for now it works, the question is if it makes sense
-	ray_jump_buffer.target_position.y = (player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH/player.JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER) * player.total_velocity().y
+#===== collision checks =====#
+func jump_buffer_update_length(new_length:float) -> void: #updates the length of the jump buffer ray
+	#ray_jump_buffer.target_position.y = (player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH/player.JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER) * player.total_velocity().y #this is the old code where I directly made the calculation in here instead of passing it
+	ray_jump_buffer.target_position.y = min(new_length, 0) #update length
 	ray_jump_buffer.force_raycast_update()
 
 func did_jump_buffer_hit() -> bool:

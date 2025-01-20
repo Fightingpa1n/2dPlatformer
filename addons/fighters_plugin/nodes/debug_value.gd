@@ -4,24 +4,31 @@ class_name DebugValue
 
 enum ValueType {STRING, INT, FLOAT, BOOL, VECTOR2, VECTOR3}
 
+@export var label:String = "Value": #the label of the value
+    set(value):
+        label = value
+        _editor_update()
+
+@export var type:ValueType = ValueType.STRING: #the type of the value
+    set(value):
+        type = value
+        _editor_update()
+
 @onready var debug_window = get_parent().debug_window
 
-var type:ValueType = ValueType.STRING
-
-var label:String = "Value:"
 var key:String = ""
 var value:Variant = null
 
-func _enter_tree():
+func _ready():
     if not get_parent() is DebugContainer: #check if the parent is a debug container
         printerr("DebugValue: Parent is not DebugContainer")
-
-func _ready():
-    if not key or key == "": key = label.to_lower().replace(" ", "_")
-    name = key
+    
     _editor_update()
 
 func _editor_update(): #update self on changes in editor (used for display changes when stuff in the editor changes aka it's not running yet)
+    key = label.replace(":", "").to_lower().replace(" ", "_")
+    name = key
+
     match type: #set default value
         ValueType.STRING:
             value = ""
