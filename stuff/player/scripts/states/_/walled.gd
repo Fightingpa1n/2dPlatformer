@@ -17,16 +17,7 @@ func physics_process(delta) -> void:
 
 func on_input_jump() -> void: #jump while on wall -> wall jump
 	#change WALL_JUMP_DIRECTION Depending on the wall direction
-
-	var wall_jump_direction = Vector2(-wall_direction, -1)
-
-	#create a new Node(idk what would fit best maybe raycasr or jsut a normal shape) to display the direction ingame (for debugging)
-	var direction_debug = RayCast2D.new()
-	direction_debug.position = Vector2(0, 0)
-	direction_debug.target_position = wall_jump_direction * player.WALL_JUMP_FORCE
-	direction_debug.enabled = true
-	player.add_child(direction_debug)
-
+	pass #TODO: implement wall jump
 
 
 

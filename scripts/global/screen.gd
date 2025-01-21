@@ -1,28 +1,6 @@
 extends Node
 
-var camera:Camera2D #the camera
-
-signal clicked_on_screen(Vector2) #signal for when the screen is clicked
-
-func _ready() -> void:
-	camera = await NodeManager.get_camera() #get the camera
-
-func _input(event):
-	var scroll = 0
-	if Input.is_action_pressed("zoom_in"):
-		scroll = 0.1
-	if Input.is_action_pressed("zoom_out"):
-		scroll = -0.1
-
-	if scroll != 0:
-		#okay so the zoom is a vector2, but the x and y are the same, so that doesn't matter to us in here.
-		#but there are some rules, the zoom value can't be 0, but it can be negativ. even though that doesn't make a difference really.
-		#so let's say the default zoom is 1, with scrolling we adjust the value by 0.1, and the minumum value is 0.1 and the maximum value is 5
-		var zoom_value = clamp(camera.zoom.x + scroll, 0.1, 5)
-		camera.zoom = Vector2(zoom_value, zoom_value)
-
-	if Input.is_action_just_pressed("reset"):
-		camera.zoom = Vector2(1,1)
+@onready var camera:Camera2D = await NodeManager.get_camera() #get the camera
 
 #================ Screen Functions (Position related) ================#
 func screen_to_world(screen_pos:Vector2) -> Vector2: #returns the world position of a given screen position

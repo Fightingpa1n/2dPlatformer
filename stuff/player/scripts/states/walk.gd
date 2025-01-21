@@ -1,11 +1,11 @@
 #states/walk.gd
-extends ParentState_Ground
+extends ParentState_Grounded
 class_name State_Walk
 
 func physics_process(delta):
-    ground_check()
+    ground_check() #do the ground check
 
-    var movement_direction = Input.get_axis("left", "right")
+    var movement_direction = InputManager.horizontal #get the horizontal input
 
     if movement_direction != 0:
         player.movement_velocity.x = move_toward(player.movement_velocity.x, movement_direction * player.WALK_SPEED, player.WALK_ACCELERATION * delta)

@@ -5,10 +5,10 @@ class_name State_Ascend
 #this is the ascend state, which is when the player is moving upwards in the air it is different from jump 
 #since jump is only moving up and ascencd is slowliwly going down (that's oversimplified but that's basically it.)
 func enter():
-	player.collision.change_enabled_rays_head(true)
+	collision.toggle_head_rays(true)
 
 func exit():
-	player.collision.change_enabled_rays_head(false)
+	collision.toggle_head_rays(false)
 
 
 func physics_process(delta):
@@ -31,12 +31,12 @@ func physics_process(delta):
 
 
 func ceiling_hit():
-	if player.collision.is_touching_ceiling():
+	if collision.is_touching_ceiling():
 		player.change_state("fall")
 
 
 func ledge_forgivness():
-	var ray = player.collision.return_ceiling_ledge_forgiveness_thingy_idk()
+	var ray = collision.return_ceiling_ledge_forgiveness_thingy_idk()
 	if ray:
 		var direction = ray.direction
 		ray = ray.ray

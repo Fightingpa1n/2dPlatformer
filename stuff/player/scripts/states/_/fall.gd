@@ -41,5 +41,4 @@ func on_input_jump():
                 
     double_jump()
 
-
-    #NOTE: so if the raycasts hits and it would activate bufferjump but then the player moves to the side avoiding the ground that got hit by the raycast, the bufferjump will still be activated meaning the player will jump as soon as he hits the ground again which is not good since it feels horrible
+    #TODO: if the raycasts hits and it would activate bufferjump but then the player moves to the side avoiding the ground that got hit by the raycast, the bufferjump will still be activated meaning the player will jump as soon as he hits the ground again which is not good since it feels horrible

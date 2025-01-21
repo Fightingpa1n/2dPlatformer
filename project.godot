@@ -19,6 +19,7 @@ config/icon="res://assets/sprites/other/icon.svg"
 
 NodeManager="*res://scripts/global/node_manager.gd"
 Screen="*res://scripts/global/screen.gd"
+InputManager="*res://scripts/global/input.gd"
 
 [dotnet]
 

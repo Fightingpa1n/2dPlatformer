@@ -1,4 +1,3 @@
-#collision.gd
 extends CollisionShape2D
 class_name PlayerCollision
 
