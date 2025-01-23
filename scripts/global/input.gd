@@ -41,6 +41,7 @@ func _input(event):
 
     #Left/Right
     if event.is_action_pressed("left") or event.is_action_pressed("right"):
+        horizontal = event.get_axos 
         if event.is_action_pressed("left"):
             emit_signal("left_pressed")
             emit_signal("horizontal_pressed", horizontal)
@@ -84,7 +85,18 @@ func _input(event):
 func _unhandled_input(_event): #TODO: I'm not sure what exactly this is for and I don't think I need it yet but In case I do I'm gonna leave it here
     pass
 
-    
+func _process(_delta):
+    if Input.is_action_pressed("left"): left = true
+    else: left = false
+    if Input.is_action_pressed("right"): right = true
+    else: right = false
+    horizontal = Input.get_axis("left", "right")
+
+    if Input.is_action_pressed("up"): up = true
+    else: up = false
+    if Input.is_action_pressed("down"): down = true
+    else: down = false
+    vertical = Input.get_axis("up", "down")
 
 
     

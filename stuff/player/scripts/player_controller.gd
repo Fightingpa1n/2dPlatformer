@@ -104,7 +104,9 @@ func _ready(): #Ready The player States and stuff
 
 #========== Input Signals ==========#
 func _on_jump(): current_state.on_jump() #jump signal
-func _on_left(): current_state.on_left() #left signal
+func _on_left(): 
+	print("left")
+	current_state.on_left() #left signal
 func _on_right(): current_state.on_right() #right signal
 func _on_horizontal(direction:float): current_state.on_horizontal(direction) #horizontal signal
 func _on_up(): current_state.on_up() #up signal
@@ -135,6 +137,7 @@ func change_state(new_state) -> void:
 		current_state_name = next_state
 		current_state.enter()
 		emit_signal("state_change", current_state_name)
+		print("Changed State to: " + current_state_name)
 	
 	is_transitioning = false
 

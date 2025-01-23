@@ -11,6 +11,7 @@ func physics_process(_delta):
 		player.change_state("walk")
 	
 func on_horizontal(direction:float) -> void: #on horizontal input
+	print(direction)
 	if direction != 0: #if the player is pressing a direction key
 		player.change_state("walk") #change to walk state
     
