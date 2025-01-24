@@ -34,43 +34,74 @@ func _input(event):
 
     #Jump
     if event.is_action_pressed("jump"):
-        emit_signal("jump_pressed")
         jump = true
+        emit_signal("jump_pressed")
     elif event.is_action_released("jump"):
         jump = false
 
     #Left/Right
-    if event.is_action_pressed("left") or event.is_action_pressed("right"):
-        horizontal = event.get_axos 
-        if event.is_action_pressed("left"):
-            emit_signal("left_pressed")
-            emit_signal("horizontal_pressed", horizontal)
-            left = true
-        elif event.is_action_pressed("right"):
-            emit_signal("right_pressed")
-            emit_signal("horizontal_pressed", horizontal)
-            right = true
-    elif event.is_action_released("left") or event.is_action_released("right"):
-        if event.is_action_released("left"):
-            left = false
-        elif event.is_action_released("right"):
-            right = false
-    
+    if event.is_action_pressed("left"): left = true #on press set left to true
+    elif event.is_action_released("left"): left = false #on release set left to false
+
+    if event.is_action_pressed("right"): right = true #on press set right to true
+    elif event.is_action_released("right"): right = false #on release set right to false
+
+
+    # this is the pseudo code for the horizontal input (I'm gonna delete this later I just want to keep this here for reference for the time being)
+
+    # var previous_horizontal = horizontal #store the previous horizontal value
+
+    # if left and right: horizontal = 0 #if both left and right are pressed then we are not moving
+    # elif left: horizontal = -1 #if left is pressed then we are moving left
+    # elif right: horizontal = 1 #if right is pressed then we are moving right
+    # else: horizontal = 0 #if neither left or right are pressed then we are not moving
+
+    # #check if horizontal has a different direction than before. like if before was either 0 or the opposite direction we have to emit the signal but if we just increase a side we don't have to emit the signal
+    # #like if previous = 0 and now = 1 we emit true (we went from not moving to moving right)
+    # #if previous = -1 and now = 1 we emit true (we went from moving left to moving right)
+    # #if previous = 0.5 and now = 1 we emit false (we just moved more to the right but we are still moving right)
+
+    # if previous_horizontal != horizontal: #if they are not the same we check stuff
+    #     if horizontal != 0: #we don't care if the new direction is 0 because we are not moving
+    #         if previous_horizontal == 0: #if the previous direction was 0 we emit the signal either way
+    #             emit_signal("horizontal_pressed", horizontal)
+
+    #         else: #now we check if we are going into the opposite direction or if we just increased the current direction
+    #             var previous_negative = previous_horizontal < 0 #if the previous direction was negative
+    #             var current_negative = horizontal < 0 #if the current direction is negative
+
+    #             if previous_negative != current_negative: #if they are not the same we emit the signal
+    #                 emit_signal("horizontal_pressed", horizontal)
+
+    var previous_horizontal = horizontal #store the previous horizontal value
+
+    horizontal = 0 if left == right else -1 if left else 1 if right else 0 #set the horizontal value (this is just full throttle aka just for button presses not for analog input like a joystick which is fine for now but just saying if I wanna add controller support in the future)
+
+    if previous_horizontal != horizontal and horizontal != 0: #if the previous direction was 0 we emit the signal either way
+        if previous_horizontal == 0 or (previous_horizontal < 0) != (horizontal < 0): #if the previous direction was 0 or if the previous direction was negative and the current direction is positive or vice versa we emit the signal
+            emit_signal("horizontal_pressed", horizontal) #emit the horizontal pressed signal
+
+    if event.is_action_pressed("left"): emit_signal("left_pressed") #on left press emit left_pressed signal (only after having done needed calculations)
+    elif event.is_action_pressed("right"): emit_signal("right_pressed") #on right press emit right_pressed signal (only after having done needed calculations)
+
     #Up/Down
-    if event.is_action_pressed("up") or event.is_action_pressed("down"):
-        if event.is_action_pressed("up"):
-            emit_signal("up_pressed")
-            emit_signal("vertical_pressed", vertical)
-            up = true
-        elif event.is_action_pressed("down"):
-            emit_signal("down_pressed")
-            emit_signal("vertical_pressed", vertical)
-            down = true
-    elif event.is_action_released("up") or event.is_action_released("down"):
-        if event.is_action_released("up"):
-            up = false
-        elif event.is_action_released("down"):
-            down = false
+    if event.is_action_pressed("up"): up = true #on up press set up to true
+    elif event.is_action_released("up"): up = false #on up release set up to false
+
+    if event.is_action_pressed("down"): down = true #on down press set down to true
+    elif event.is_action_released("down"): down = false #on down release set down to false
+
+    var previous_vertical = vertical #store the previous vertical value
+
+    vertical = 0 if up == down else -1 if down else 1 if up else 0 #set the vertical value (this is just full throttle aka just for button presses not for analog input like a joystick which is fine for now but just saying if I wanna add controller support in the future)
+
+    if previous_vertical != vertical and vertical != 0: #if the previous direction was 0 we emit the signal either way
+        if previous_vertical == 0 or (previous_vertical < 0) != (vertical < 0): #if the previous direction was 0 or if the previous direction was negative and the current direction is positive or vice versa we emit the signal
+            emit_signal("vertical_pressed", vertical) #emit the vertical pressed signal
+
+    if event.is_action_pressed("up"): emit_signal("up_pressed") #on up press emit up_pressed signal (only after having done needed calculations)
+    elif event.is_action_pressed("down"): emit_signal("down_pressed") #on down press emit down_pressed signal (only after having done needed calculations)
+
 
 
     #========= CAMERA INPUT =========#
@@ -85,7 +116,7 @@ func _input(event):
 func _unhandled_input(_event): #TODO: I'm not sure what exactly this is for and I don't think I need it yet but In case I do I'm gonna leave it here
     pass
 
-func _process(_delta):
+func _process(_delta): #for continued updates of values, in case the input function misses something. I'll just leave it here since I'm not entirely sure if I need it, so just to be safe
     if Input.is_action_pressed("left"): left = true
     else: left = false
     if Input.is_action_pressed("right"): right = true
