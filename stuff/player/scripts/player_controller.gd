@@ -8,19 +8,18 @@ class_name PlayerController
 @export_group("Physics Settings")
 @export var FALL_SPEED = 500.0 #the speed the player falls at (at a maximum)
 @export var FALL_ACCELERATION = 1030.0 #the acceleration applied to the fall speed (basically it's just a fancy way of saying gravity)
-@export_subgroup("Grounded")
-@export var GROUND_DECELERATION = 3600.0 #the deceleration applied to each velocity vector when the player is grounded
-@export_subgroup("Air")
-@export var AIR_DECELERATION = 3600.0 #the deceleration applied to each velocity vector when the player is in the air
+@export_subgroup("Friction")
+@export var GROUND_FRICTION = 3600.0 ## the deceleration applied to velocitys when the player is on the ground
+@export var AIR_FRICTION = 3600.0 ## the deceleration applied to velocitys when the player is in the air
 
 @export_group("Movement Settings")
-@export var WALK_SPEED = 300.0 #the speed the player walks at (at a maximum)
-@export var WALK_ACCELERATION = 3600.0 #the acceleration applied to the walk speed
-@export var WALK_DECELERATION = 3600.0 #the deceleration applied to the walk speed
+@export var WALK_SPEED = 300.0 ## the speed the player walks at (at a maximum)
+@export var GROUND_MOVE_ACCELERATION = 3600.0 ## the movment acceleration on the ground
+@export var GROUND_MOVE_DECELERATION = 3600.0 ## the movment deceleration on the ground
 @export_subgroup("Air Movement Settings")
-@export var AIR_MOVE_SPEED = 300.0 #the speed the player moves in the air (at a maximum)
-@export var AIR_MOVE_ACCELERATION = 3600.0 #the acceleration applied to the air move speed
-@export var AIR_MOVE_DECELERATION = 3600.0 #the deceleration applied to the air move speed
+@export var AIR_MOVE_SPEED = 300.0 ## the speed the player moves in the air (at a maximum)
+@export var AIR_MOVE_ACCELERATION = 3600.0 ## the movment acceleration in the air
+@export var AIR_MOVE_DECELERATION = 3600.0 ## the movment deceleration in the air
 
 @export_group("Jump Settings")
 @export var JUMP_FORCE = 400.0 #the force applied to the player when jumping
@@ -84,7 +83,6 @@ var is_transitioning = false
 
 
 func _ready(): #Ready The player States and stuff
-
 	states["idle"] = State_Idle.new(self)
 	states["walk"] = State_Walk.new(self)
 

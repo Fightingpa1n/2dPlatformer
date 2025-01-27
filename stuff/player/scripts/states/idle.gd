@@ -1,4 +1,3 @@
-#states/idle.gd
 extends ParentState_Grounded
 class_name State_Idle
 

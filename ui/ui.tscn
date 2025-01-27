@@ -1,33 +1,3 @@
-[gd_scene load_steps=5 format=3 uid="uid://djqttp6l4l42i"]
-
-[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_root.gd" id="1_ddtaq"]
-[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_draw.gd" id="2_iheyo"]
-[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_window.gd" id="2_u4tq8"]
-[ext_resource type="Script" path="res://addons/fighters_plugin/nodes/debug_container.gd" id="4_24a21"]
+[gd_scene format=3 uid="uid://djqttp6l4l42i"]
 
 [node name="UI" type="CanvasLayer"]
-
-[node name="Debug" type="Control" parent="."]
-unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_ddtaq")
-
-[node name="DebugDraw" type="Control" parent="Debug"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("2_iheyo")
-
-[node name="DebugWindow" type="PanelContainer" parent="Debug"]
-custom_minimum_size = Vector2(200, 200)
-layout_mode = 0
-script = ExtResource("2_u4tq8")
-
-[node name="DebugContainer" type="VBoxContainer" parent="Debug/DebugWindow"]
-layout_mode = 2
-script = ExtResource("4_24a21")

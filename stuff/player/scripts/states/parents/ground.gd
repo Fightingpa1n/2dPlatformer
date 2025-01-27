@@ -13,12 +13,9 @@ func enter(): #on enter any grounded state should reset values like coyote time 
 	# 	print("jumped from the buffer")
 	# 	player.change_state("jump")
 
-func ground_check() -> bool: #checks if the player is touching the ground
-	if collision.is_touching_ground(): return true
-	else:
-		print("falling")
-		#player.change_state("fall") #TODO: commented out for the moment since I need to clean up fall first and readd it to the state machine
-		return false
+func ground_check() -> void: #function to check for ground and change state if needed
+	if !collision.is_touching_ground():
+		change_state("fall")
 
 func on_jump(): #the jump init can be handled here since pretty much all grounded states won't need to alter it
 	print("Jump!")

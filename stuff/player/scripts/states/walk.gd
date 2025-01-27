@@ -1,4 +1,3 @@
-#states/walk.gd
 extends ParentState_Grounded
 class_name State_Walk
 
@@ -8,13 +7,16 @@ func physics_process(delta):
     var movement_direction = InputManager.horizontal #get the horizontal input
 
     if movement_direction != 0:
-        player.movement_velocity.x = move_toward(player.movement_velocity.x, movement_direction * player.WALK_SPEED, player.WALK_ACCELERATION * delta)
+        var max_speed = player.WALK_SPEED * movement_direction
+        var acceleration = player.GROUND_MOVE_ACCELERATION * delta
+
+        player.movement_velocity.x = move_toward(player.movement_velocity.x, max_speed, acceleration)
     else:
-        physics_movement_deceleration(player.GROUND_DECELERATION, delta)
-        
-    physics_deceleration(player.GROUND_DECELERATION, delta) #general deceleration
+        slow_down(delta, player.GROUND_MOVE_DECELERATION) #apply friction to the player
+
+    apply_friction(delta, player.GROUND_FRICTION) #apply friction to the player
 
     if player.total_velocity().x == 0:
-        player.change_state("idle")
+        change_state("idle")
     
 
