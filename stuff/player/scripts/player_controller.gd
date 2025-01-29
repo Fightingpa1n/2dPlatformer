@@ -3,7 +3,7 @@ class_name PlayerController
 
 #this is the main Player Controller script containing values, functions and being responsible for the state machine
 
-#=== constant values ===#
+#=== constant values ===# #TODO: clean up values (especially the names)
 @export_category("Player Settings")
 @export_group("Physics Settings")
 @export var FALL_SPEED = 500.0 #the speed the player falls at (at a maximum)
@@ -61,6 +61,8 @@ class_name PlayerController
 #=== player variables ===#
 var movement_velocity = Vector2() #the velocity for movement
 var other_velocity = Vector2() #the velocity for other stuff like powaaa
+
+#=== player state variables ===# (used by the differnet individual states) #Note: maybe I should change the way this works to dynamically do that so they get added to like a list or something and only get used while active or something like that
 var jump_time = 0.0
 var buffer_jump = false
 var coyote_time_time= 0.0
@@ -85,7 +87,7 @@ var is_transitioning = false
 func _ready(): #Ready The player States and stuff
 	states["idle"] = State_Idle.new(self)
 	states["walk"] = State_Walk.new(self)
-
+	states["fall"] = State_Fall.new(self)
 
 	change_state("idle") #set inital state
 
@@ -158,7 +160,25 @@ func _physics_process(delta):
 	velocity += movement_velocity
 	velocity += other_velocity
 	
-	move_and_slide()
+	var did_collide = move_and_slide() #apply velocity and stuff and then check for physics collisions
+
+	if did_collide: #reset velocitys if we collide with stuff
+		for i in range(get_slide_collision_count()):
+			var slide_collision = get_slide_collision(i)
+			var normal = slide_collision.get_normal()
+
+			if abs(normal.y) > 0.7: #Ground/ceiling collision
+				velocity.y = 0
+				movement_velocity.y = 0
+				other_velocity.y = 0
+	
+			elif abs(normal.x) > 0.7: #Wall collision
+				velocity.x = 0
+				movement_velocity.x = 0
+				other_velocity.x = 0
+
+
+
 
 func _process(delta): current_state.normal_process(delta) #normal process
 

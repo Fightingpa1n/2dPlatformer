@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://c8e5w8s7057cs" path="res://assets/tilesets/tiles.tres" id="1_aahoq"]
 [ext_resource type="PackedScene" uid="uid://bwxbyv5so6cwd" path="res://stuff/player/player.tscn" id="2_m225d"]
-[ext_resource type="Script" path="res://stuff/camera.gd" id="3_2y5b7"]
+[ext_resource type="Script" path="res://stuff/player/scripts/player_camera.gd" id="3_vfnma"]
 [ext_resource type="PackedScene" uid="uid://djqttp6l4l42i" path="res://ui/ui.tscn" id="4_j2btv"]
 
 [node name="Main" type="Node2D"]
@@ -14,11 +14,11 @@ layer_0/tile_data = PackedInt32Array(2359381, 458752, 4, 2293845, 0, 4, 2228309,
 
 [node name="Player" parent="." instance=ExtResource("2_m225d")]
 unique_name_in_owner = true
-position = Vector2(-20, -6)
+position = Vector2(-10, -20)
 
 [node name="MainCamera" type="Camera2D" parent="Player"]
 unique_name_in_owner = true
-script = ExtResource("3_2y5b7")
+script = ExtResource("3_vfnma")
 
 [node name="UI" parent="Player/MainCamera" instance=ExtResource("4_j2btv")]
 unique_name_in_owner = true

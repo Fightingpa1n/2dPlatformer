@@ -50,13 +50,24 @@ func change_state(new_state:String) -> void:
 
 #========= Physics =========#
 ## apply gravity to the player by accelerating the fall speed until it reaches the given max fall speed
-func apply_gravity(delta:float, fall_acceleration:float=player.FALL_ACCELERATION, max_fall_speed:float=player.FALL_SPEED) -> void:
-	player.movement_velocity.y = move_toward(player.movement_velocity.y, max_fall_speed, fall_acceleration * delta)
+func apply_gravity(delta:float, max_fall_speed:float=player.FALL_SPEED, fall_acceleration:float=player.FALL_ACCELERATION) -> void:
+	player.velocity.y = move_toward(player.velocity.y, max_fall_speed, fall_acceleration * delta)
 
 ## apply friction to the player by slowing down velocity and other velocity until it reaches 0 by a given deceleration
 func apply_friction(delta:float, deceleration:float) -> void: ##physics method to slow down velocitys
 	if abs(player.velocity.x) > 0: player.velocity.x = move_toward(player.velocity.x, 0, deceleration * delta)
 	if abs(player.other_velocity.x) > 0: player.other_velocity.x = move_toward(player.other_velocity.x, 0, deceleration * delta)
+
+## TODO: come up with a description I'm too dumb right now
+func move(delta:float, max_speed:float, acceleration:float, deceleration:float) -> void:
+	var horizontal_input = InputManager.horizontal #get input
+	if horizontal_input != 0: #if there is input
+		var _max_speed = max_speed * horizontal_input #set max speed to max speed times input
+		var _acceleration = acceleration * delta #set acceleration to acceleration times delta
+		player.movement_velocity.x = move_toward(player.movement_velocity.x, _max_speed, _acceleration)
+	elif abs(player.movement_velocity.x) > 0: #if there is no input
+		var _deceleration = deceleration * delta #set deceleration to deceleration times delta
+		player.movement_velocity.x = move_toward(player.movement_velocity.x, 0, _deceleration)
 
 ## slow down the players movement velocity down to 0 by a given deceleration value (used for smoothly stoping the player when no input is given)
 func slow_down(delta:float, deceleration:float) -> void:

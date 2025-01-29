@@ -20,3 +20,14 @@ func ground_check() -> void: #function to check for ground and change state if n
 func on_jump(): #the jump init can be handled here since pretty much all grounded states won't need to alter it
 	print("Jump!")
 	#player.change_state("jump") #TODO: commented out for the moment since I need to clean up jump first and readd it to the state machine
+
+#helper methods with default values for grounded states
+func move(delta:float,
+	max_speed:float = player.WALK_SPEED, 
+	acceleration:float = player.GROUND_MOVE_ACCELERATION,
+	deceleration:float = player.GROUND_MOVE_DECELERATION
+) -> void:
+	super(delta, max_speed, acceleration, deceleration) #call the move function from the parent state
+
+func apply_friction(delta:float, deceleration:float=player.GROUND_FRICTION) -> void: #apply friction to the player
+	super(delta, deceleration) #call the apply friction function from the parent state

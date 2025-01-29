@@ -21,32 +21,33 @@ class_name ParentState_Air
 #             player.change_state("walled")
 
 func ground_check(): #function to check for ground and change state if needed
-    if player.collision.is_touching_ground():
+    if collision.is_touching_ground():
         change_state("idle")
 
 
-func move(delta): #a recyclable function for moving the player in the air
-    var movement_direction = Input.get_axis("left", "right")
 
-    if movement_direction != 0:
-        player.movement_velocity.x = move_toward(player.movement_velocity.x, movement_direction * player.AIR_MOVE_SPEED, player.AIR_MOVE_ACCELERATION * delta)
-    else:
-        slow_down(delta, player.AIR_DECELERATION) #apply friction to the player
-
-    apply_friction(delta, player.AIR_DECELERATION) #apply friction to the player
+# func double_jump():
+#     if player.jump_counter < player.EXTRA_JUMPS:
+#         player.jump_counter += 1
+#         player.change_state("jump")
 
 
+func on_jump(): #on jump input
+    print("Jump!")
+    # if player.coyote_time_time > 0:
+    #     player.coyote_time_time = 0
+    #     player.change_state("jump")
+    #     return true
+    # else:
+    #     return false
 
-func double_jump():
-    if player.jump_counter < player.EXTRA_JUMPS:
-        player.jump_counter += 1
-        player.change_state("jump")
+#helper methods with default values for grounded states
+func move(delta:float,
+    max_speed:float = player.AIR_MOVE_SPEED,
+    acceleration:float = player.AIR_MOVE_ACCELERATION,
+    deceleration:float = player.AIR_MOVE_DECELERATION
+) -> void:
+    super(delta, max_speed, acceleration, deceleration) #call the move function from the parent state
 
-
-func on_input_jump():
-    if player.coyote_time_time > 0:
-        player.coyote_time_time = 0
-        player.change_state("jump")
-        return true
-    else:
-        return false
+func apply_friction(delta:float, deceleration:float=player.AIR_FRICTION) -> void: #apply friction to the player
+    super(delta, deceleration) #call the apply friction function from the parent state
