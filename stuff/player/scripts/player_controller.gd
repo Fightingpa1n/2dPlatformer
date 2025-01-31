@@ -16,6 +16,14 @@ class_name PlayerController
 @export var WALK_SPEED = 300.0 ## the speed the player walks at (at a maximum)
 @export var GROUND_MOVE_ACCELERATION = 3600.0 ## the movment acceleration on the ground
 @export var GROUND_MOVE_DECELERATION = 3600.0 ## the movment deceleration on the ground
+@export_subgroup("Run Settings")
+@export var RUN_SPEED = 600.0 ## the speed the player runs at (at a maximum)
+@export var RUN_ACCELERATION = 3600.0 ## the movment acceleration when running
+@export var RUN_DECELERATION = 3600.0 ## the movment deceleration when running
+@export_subgroup("Crouch Settings")
+@export var CROUCH_SPEED = 150.0 ## the speed the player crouches at (at a maximum)
+@export var CROUCH_ACCELERATION = 3600.0 ## the movment acceleration when crouching
+@export var CROUCH_DECELERATION = 3600.0 ## the movment deceleration when crouching
 @export_subgroup("Air Movement Settings")
 @export var AIR_MOVE_SPEED = 300.0 ## the speed the player moves in the air (at a maximum)
 @export var AIR_MOVE_ACCELERATION = 3600.0 ## the movment acceleration in the air
@@ -68,83 +76,106 @@ var buffer_jump = false
 var coyote_time_time= 0.0
 var jump_counter = 0
 
-@onready var collision: CollisionShape2D = %collision
+@onready var collision:PlayerCollision = %collision ## the collision object for the player (that handles collisions and raycasts)
 
-
-#=== debug signals ===# #currrently unused
+#=== debug signals ===# #currrently unused #TODO: Add Debug Stuff again so signals are used again
 signal state_change(state_name:String)
 signal velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
 signal pre_process_velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
 
 #=== State variables ===#
-var current_state: PlayerState = null
-var current_state_name = ""
-var states = {}
-var state_queue = []
-var is_transitioning = false
-
+var states = {}  ## states Dictionary where all states are stored by their id
+var current_state:PlayerState = null ## the current state the player is in
+var previous_state:PlayerState = null ## the previous state the player was in
 
 func _ready(): #Ready The player States and stuff
-	states["idle"] = State_Idle.new(self)
-	states["walk"] = State_Walk.new(self)
-	states["fall"] = State_Fall.new(self)
+	add_state(IdleState)
+	add_state(WalkState)
+	add_state(RunState)
+	add_state(CrouchState)
+	add_state(FallState)
 
-	change_state("idle") #set inital state
+	current_state = states[IdleState.id] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 
 	#connect InputSignals
-	InputManager.connect("jump_pressed", _on_jump)
 	InputManager.connect("left_pressed", _on_left)
 	InputManager.connect("right_pressed", _on_right)
 	InputManager.connect("horizontal_pressed", _on_horizontal)
 	InputManager.connect("up_pressed", _on_up)
 	InputManager.connect("down_pressed", _on_down)
 	InputManager.connect("vertical_pressed", _on_vertical)
-
+	InputManager.connect("jump_pressed", _on_jump)
+	InputManager.connect("run_pressed", _on_run)
+	InputManager.connect("crouch_pressed", _on_crouch)
 
 
 #========== Input Signals ==========#
-func _on_jump(): current_state.on_jump() #jump signal
-func _on_left(): 
-	print("left")
-	current_state.on_left() #left signal
+func _on_left(): current_state.on_left() #left signal
 func _on_right(): current_state.on_right() #right signal
 func _on_horizontal(direction:float): current_state.on_horizontal(direction) #horizontal signal
 func _on_up(): current_state.on_up() #up signal
 func _on_down(): current_state.on_down() #down signal
 func _on_vertical(direction:float): current_state.on_vertical(direction) #vertical signal
+func _on_jump(): current_state.on_jump() #jump signal
+func _on_run(): current_state.on_run() #run signal
+func _on_crouch(): current_state.on_crouch() #crouch signal
 
+
+#========== States ==========#
+func add_state(state_class:GDScript): ## add a state to the state machine
+	var state_instance = state_class.new() #instantiate the state
+
+	if state_instance is not PlayerState: #check if the state is a PlayerState
+		printerr("Trying to add a state that is not a PlayerState: " + state_instance)
+		return
+
+	if not state_instance.id: #check if the state has an id
+		printerr("State has no id, make sure it has a static id variable: " + state_instance)
+		return
+	
+	if state_instance.id in states: #check if the state is already in the state machine
+		printerr("State with this id already exists: " + state_instance.id)
+		return
+
+	state_instance.player = self #set the player reference
+	state_instance.collision = collision #set the collision reference
+	states[state_instance.id] = state_instance
 
 #========== State Machine ==========#
-func change_state(new_state) -> void:
-	if new_state not in states:
-		printerr("Error: State not found: " + new_state)
+var _state_queue = [] ## the queue of states to change to
+var _is_transitioning = false ## if the state machine is currently transitioning between states
+
+func _state_changer(new_state_id:String) -> void: ## the statemashine function responsible for the actual state change
+	if new_state_id not in states: ## check if the state exists
+		printerr("Error: State not found: " + new_state_id)
 		return
 
-	state_queue.append(new_state)
-	
-	# Prevent re-entry into the function if it's already processing the queue
-	if is_transitioning:
+	_state_queue.append(new_state_id) ## add the state to the queue
+
+	## Prevent re-entry into the function if it's already processing the queue
+	if _is_transitioning:
 		return
-	
-	is_transitioning = true
-	while state_queue.size() > 0:
-		var next_state = state_queue.pop_front()  # Retrieve and remove the first element from the queue
 
-		if current_state != null:
-			current_state.exit()
+	_is_transitioning = true ## set the transitioning variable to true
+	while _state_queue.size() > 0: ## loop through the queue
+		var next_state_id = _state_queue.pop_front() ## Retrieve and remove the first element from the queue
 
-		current_state = states[next_state]
-		current_state_name = next_state
-		current_state.enter()
-		emit_signal("state_change", current_state_name)
-		print("Changed State to: " + current_state_name)
-	
-	is_transitioning = false
+		if current_state != null: ## if there is a current state
+			current_state.exit() ## exit the current state
+			previous_state = current_state ## set the previous state to the current state
 
+		current_state = states[next_state_id] ## set the current state to the new state
+		current_state.enter() ## enter the new state
+		emit_signal("state_change", next_state_id) ## emit the state change signal
+		print("Changed State to: " + next_state_id) ## print the state change
+
+	_is_transitioning = false ## set the transitioning variable to false
+
+func change_state(new_state_id:String) -> void: ## the function to change the state. NOTE: currently this is just a wrapper but it's ready for more complex stuff
+	_state_changer(new_state_id) #call the state changer function
 
 #========== Handling Stuff ==========#
-func _physics_process(delta):
-	#NOTE: we split the velocity into mutliple vectors to make it easier with multiple velocity sources clashing with each other
+func _physics_process(delta): #physics process
 
 	#subtract the different velocitys from the main velocity
 	velocity -= movement_velocity
@@ -178,15 +209,13 @@ func _physics_process(delta):
 				other_velocity.x = 0
 
 
-
-
 func _process(delta): current_state.normal_process(delta) #normal process
 
+#========== Helper Functions ==========#
+func total_velocity() -> Vector2: return velocity + movement_velocity + other_velocity ##returns the total of all velocitys combined, to see how fast the player is going in total 
 
-func powaaa(direction, force) -> void:
-	other_velocity = direction.normalized() * force #multiply the direction vector by the force to get the force vector and set is as velocity
-
-func total_velocity() -> Vector2: return velocity + movement_velocity + other_velocity ##returns the total of all velocitys combined, to see how fast the player is going in total
+func get_current_state() -> String: return current_state.id ## returns the id of the current state
+func get_previous_state() -> String: return previous_state.id ## returns the id of the previous state
 
 #TODO: make a change state function where you can define a parent state like grounded or air
 #      and it will then automatically change to the correct state that extends said parent state

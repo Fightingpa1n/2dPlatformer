@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends Node
 class_name PlayerState 
 
 ## the parent state for all player states! (contains all base methods and variables)
@@ -8,9 +8,10 @@ var player:PlayerController ##Player reference for stuff like velocitys and stat
 var collision:PlayerCollision ##collision reference for raycasts and collision checks
 
 ## used to set player and collision reference (Please don't touch this function)
-func _init(the_player:PlayerController) -> void: ## the Init function get's called on states definition in the player controller and is just used to set the player and collision reference please don't touch it :)	
-	player = the_player
-	collision = the_player.collision
+func _ready() -> void: ## the Init function get's called on states definition in the player controller and is just used to set the player and collision reference please don't touch it :)	
+	if not player or not collision: ## if player or collision are not set
+		print("Player State not Initialized correctly! player or collision not set!") ## print error message
+		queue_free() ## destroy the state
 
 #================ STATE METHODS ================#
 ## called when the state is entered (for reseting values and activating raycasts and stuff like that)
@@ -31,8 +32,6 @@ func physics_process(_delta:float) -> void:
 	pass
 
 #================ INPUT METHODS ================#
-func on_jump() -> void: pass ## called when jump button is pressed
-
 func on_left() -> void: pass ## called when left button is pressed
 func on_right() -> void: pass ## called when right button is pressed
 func on_horizontal(_direction:float) -> void: pass ## called when either left or right button is pressed. the passed float is the direction of the input so a range from -1 to 1 (0 if neither or both)
@@ -41,10 +40,14 @@ func on_up() -> void: pass ## called when up button is pressed
 func on_down() -> void: pass ## called when down button is pressed
 func on_vertical(_direction:float) -> void: pass ## called when either up or down button is pressed. the passed float is the direction of the input so a range from -1 to 1 (0 if neither or both)
 
+func on_jump() -> void: pass ## called when jump button is pressed
+func on_run() -> void: pass ## called when run button is pressed
+func on_crouch() -> void: pass ## called when crouch button is pressed
+
 #================ HELPER METHODS ================#
 ## changes the player state to the state with the given name (defined in the player controller)
-func change_state(new_state:String) -> void:
-	player.change_state(new_state)
+func change_state(new_state_id:String) -> void:
+	player.change_state(new_state_id)
 
 #========= Checks =========#
 

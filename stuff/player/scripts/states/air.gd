@@ -22,7 +22,7 @@ class_name ParentState_Air
 
 func ground_check(): #function to check for ground and change state if needed
     if collision.is_touching_ground():
-        change_state("idle")
+        change_state(IdleState.id)
 
 
 

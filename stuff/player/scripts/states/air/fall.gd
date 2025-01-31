@@ -1,7 +1,8 @@
 extends ParentState_Air
-class_name State_Fall
+class_name FallState
 
-#the fall state is the state where the player is in the air and falling down aka a positive y velocity, I think.
+static var id = "fall"
+#while in the air whith a negative y velocity (aka. are falling down)
 
 func enter():
     collision.toggle_jump_buffer_ray(true) #enable jump buffer ray
