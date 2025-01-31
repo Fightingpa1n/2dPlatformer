@@ -10,14 +10,14 @@ func physics_process(delta):
     if player.total_velocity().x == 0: #if we aren't moving we should be idle
         change_state(IdleState.id)
     
-    if InputManager.run: #if the player is running
+    if InputManager.run.pressed: #if the player is running
         change_state(RunState.id) #change to run state
     
     move(delta) #move the player (ground defaults)
     
     apply_friction(delta) #apply friction to the player (ground defaults)
 
-func on_run() -> void: #on run input
+func on_run_press() -> void: #on run input
     change_state(RunState.id) #change to run state
     
 

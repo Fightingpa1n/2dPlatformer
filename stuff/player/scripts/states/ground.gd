@@ -17,11 +17,11 @@ func ground_check() -> void: #function to check for ground and change state if n
 	if !collision.is_touching_ground():
 		change_state(FallState.id)
 
-func on_jump(): #the jump init can be handled here since pretty much all grounded states won't need to alter it
+func on_jump_press(): #the jump init can be handled here since pretty much all grounded states won't need to alter it
 	print("Jump!")
 	#player.change_state("jump") #TODO: commented out for the moment since I need to clean up jump first and readd it to the state machine
 
-func on_crouch(): #the crouch init can be handled here since pretty much all grounded states won't need to alter it
+func on_crouch_press(): #the crouch init can be handled here since pretty much all grounded states won't need to alter it
 	change_state(CrouchState.id)
 
 #helper methods with default values for grounded states

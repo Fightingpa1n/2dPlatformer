@@ -8,9 +8,9 @@ class_name PlayerCamera
 func _ready(): #Ready
 
     #connect Input
-    InputManager.connect("camera_zoom_in_pressed", _on_zoom_in)
-    InputManager.connect("camera_zoom_out_pressed", _on_zoom_out)
-    InputManager.connect("camera_reset_pressed", _reset)
+    InputManager.camera_zoom_in.connect("on_press", _on_zoom_in)
+    InputManager.camera_zoom_out.connect("on_press", _on_zoom_out)
+    InputManager.camera_reset.connect("on_press", _reset)
 
 
 func _on_zoom_in(): #zoom in

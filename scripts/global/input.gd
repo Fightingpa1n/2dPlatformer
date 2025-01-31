@@ -1,124 +1,173 @@
 extends Node
 
-##this is the Input Script the Global Script that handles Input Stuff
-
-#========= Settings =========#
-var double_tap_threshold:float = 0.2 ## the time in seconds that a button can be pressed down again to be considered a double tap
-var double_tap_release:bool = false ## if the doubletap timer should start on press of a button or on release of a button (true = on release, false = on press)
+## this is the Input Script the Global Script that handles Input Stuff
 
 #========= PLAYER INPUT =========#
+var left:ActionKey = ActionKey.new("left") ## move left action key
+var right:ActionKey = ActionKey.new("right") ## move right action key
+var horizontal:ActionAxis = ActionAxis.new(left, right) ## left/right(horizontal) action axis
 
-#left/right
-signal left_pressed ## signal on left button is pressed
-signal left_double_tap ## signal on left button is double tapped
-signal right_pressed ## signal on right button is pressed
-signal right_double_tap ## signal on right button is double tapped
-signal horizontal_pressed(direction:float) ## signal on either left or right button is pressed
-var left:bool = false ## if left button is pressed
-var left_time_pressed:float = 0 ## the time the left button is held down for
-var _left_double_tap_timer:float = 0 ## the timer for the double tap of the left button
-var right:bool = false ## if right button is pressed
-var right_time_pressed:float = 0 ## the time the right button is held down for
-var _right_double_tap_timer:float = 0 ## the timer for the double tap of the right button
-var horizontal:float = 0 ## the direction of left or right input 0 if neither or both
+var up:ActionKey = ActionKey.new("up") ## move up action key
+var down:ActionKey = ActionKey.new("down") ## move down action key
+var vertical:ActionAxis = ActionAxis.new(down, up) ## up/down(vertical) action axis
 
-#up/down
-signal up_pressed ##signal on up button is pressed
-signal down_pressed ##signal on down button is pressed
-signal vertical_pressed(direction:float) ##signal on either up or down button is pressed
-var up:bool = false ##if up button is pressed
-var down:bool = false ##if down button is pressed
-var vertical:float = 0 ##the direction of up or down input 0 if neither or both
+var jump:ActionKey = ActionKey.new("jump") ## jump action key
+var run:ActionKey = ActionKey.new("run") ## run action key
+var crouch:ActionKey = ActionKey.new("crouch") ## crouch action key
 
-#jump
-signal jump_pressed ##signal on jump button is pressed
-var jump:bool = false ##if jump button is pressed
-
-#run (sprint)
-signal run_pressed ##signal on run button is pressed
-var run:bool = false ##if run button is pressed
-
-#crouch
-signal crouch_pressed ##signal on crouch button is pressed
-var crouch:bool = false ##if crouch button is pressed
 
 #========= CAMERA INPUT =========#
-signal camera_zoom_in_pressed ##signal on zoom in button is pressed
-signal camera_zoom_out_pressed ##signal on zoom out button is pressed
-signal camera_reset_pressed ##signal on reset button is pressed
+var camera_zoom_in:ActionKey = ActionKey.new("zoom_in") ## zoom in key input
+var camera_zoom_out:ActionKey = ActionKey.new("zoom_out") ## zoom out key input
+var camera_reset:ActionKey = ActionKey.new("reset") ## reset key input
+
 
 func _input(event):
+    var time_stamp:float = float(Time.get_ticks_msec() / 1000.0) #get the current time in seconds
 
     #========= PLAYER INPUT =========#
-    #Left/Right
-    if event.is_action_pressed("left"): left = true #on press set left to true
-    elif event.is_action_released("left"): left = false #on release set left to false
+    left.input_update(event, time_stamp) #left
+    right.input_update(event, time_stamp) #right
+    horizontal.input_update() #horizontal
+    
+    up.input_update(event, time_stamp) #up
+    down.input_update(event, time_stamp) #down
+    vertical.input_update() #vertical
 
-    if event.is_action_pressed("right"): right = true #on press set right to true
-    elif event.is_action_released("right"): right = false #on release set right to false
-
-    var previous_horizontal = horizontal #store the previous horizontal value
-
-    horizontal = 0 if left == right else -1 if left else 1 if right else 0 #set the horizontal value (this is just full throttle aka just for button presses not for analog input like a joystick which is fine for now but just saying if I wanna add controller support in the future)
-
-    if previous_horizontal != horizontal and horizontal != 0: #if the previous direction was 0 we emit the signal either way
-        if previous_horizontal == 0 or (previous_horizontal < 0) != (horizontal < 0): #if the previous direction was 0 or if the previous direction was negative and the current direction is positive or vice versa we emit the signal
-            emit_signal("horizontal_pressed", horizontal) #emit the horizontal pressed signal
-
-    if event.is_action_pressed("left"): emit_signal("left_pressed") #on left press emit left_pressed signal (only after having done needed calculations)
-    elif event.is_action_pressed("right"): emit_signal("right_pressed") #on right press emit right_pressed signal (only after having done needed calculations)
-
-    #Up/Down
-    if event.is_action_pressed("up"): up = true #on up press set up to true
-    elif event.is_action_released("up"): up = false #on up release set up to false
-
-    if event.is_action_pressed("down"): down = true #on down press set down to true
-    elif event.is_action_released("down"): down = false #on down release set down to false
-
-    var previous_vertical = vertical #store the previous vertical value
-
-    vertical = 0 if up == down else -1 if down else 1 if up else 0 #set the vertical value (this is just full throttle aka just for button presses not for analog input like a joystick which is fine for now but just saying if I wanna add controller support in the future)
-
-    if previous_vertical != vertical and vertical != 0: #if the previous direction was 0 we emit the signal either way
-        if previous_vertical == 0 or (previous_vertical < 0) != (vertical < 0): #if the previous direction was 0 or if the previous direction was negative and the current direction is positive or vice versa we emit the signal
-            emit_signal("vertical_pressed", vertical) #emit the vertical pressed signal
-
-    if event.is_action_pressed("up"): emit_signal("up_pressed") #on up press emit up_pressed signal (only after having done needed calculations)
-    elif event.is_action_pressed("down"): emit_signal("down_pressed") #on down press emit down_pressed signal (only after having done needed calculations)
-
-    #Jump
-    if event.is_action_pressed("jump"):
-        jump = true
-        emit_signal("jump_pressed")
-    elif event.is_action_released("jump"):
-        jump = false
-
-    #Run
-    if event.is_action_pressed("run"):
-        run = true
-        emit_signal("run_pressed")
-    elif event.is_action_released("run"):
-        run = false
-
-    #Crouch
-    if event.is_action_pressed("crouch"):
-        crouch = true
-        emit_signal("crouch_pressed")
-    elif event.is_action_released("crouch"):
-        crouch = false
-
+    jump.input_update(event, time_stamp) #jump
+    run.input_update(event, time_stamp) #run
+    crouch.input_update(event, time_stamp) #crouch
 
     #========= CAMERA INPUT =========#
-    if event.is_action_pressed("zoom_in"):
-        emit_signal("camera_zoom_in_pressed")
-    if event.is_action_pressed("zoom_out"):
-        emit_signal("camera_zoom_out_pressed")
-    if event.is_action_pressed("reset"):
-        emit_signal("camera_reset_pressed")
+    camera_zoom_in.input_update(event, time_stamp) #zoom in
+    camera_zoom_out.input_update(event, time_stamp) #zoom out
+    camera_reset.input_update(event, time_stamp) #reset
 
 
-func _unhandled_input(_event): #TODO: I'm not sure what exactly this is for and I don't think I need it yet but In case I do I'm gonna leave it here
-    pass
+func _unhandled_input(event): #TODO: I'm not sure what exactly this is for and I don't think I need it yet but In case I do I'm gonna leave it here
+    #========= PLAYER INPUT =========#
+    left.unhandled_update(event) #left
+    right.unhandled_update(event) #right
+    horizontal.unhandled_update(event) #horizontal
+
+    up.unhandled_update(event) #up
+    down.unhandled_update(event) #down
+    vertical.unhandled_update(event) #vertical
+
+    jump.unhandled_update(event) #jump
+    run.unhandled_update(event) #run
+    crouch.unhandled_update(event) #crouch
+
+    #========= CAMERA INPUT =========#
+    camera_zoom_in.unhandled_update(event) #zoom in
+    camera_zoom_out.unhandled_update(event) #zoom out
+    camera_reset.unhandled_update(event) #reset
+
 
 func _process(_delta): #maybe I need this in the future but for now I don't think I need it
-    pass
+    #========= PLAYER INPUT =========#
+    left.process_update(_delta) #left
+    right.process_update(_delta) #right
+    horizontal.process_update(_delta) #horizontal
+
+    up.process_update(_delta) #up
+    down.process_update(_delta) #down
+    vertical.process_update(_delta) #vertical
+
+    jump.process_update(_delta) #jump
+    run.process_update(_delta) #run
+    crouch.process_update(_delta) #crouch
+
+    #========= CAMERA INPUT =========#
+    camera_zoom_in.process_update(_delta) #zoom in
+    camera_zoom_out.process_update(_delta) #zoom out
+    camera_reset.process_update(_delta) #reset
+
+
+#========= HELPER =========#
+class ActionKey: ## helper class for handeling input
+    var action_key:String ## the action key of the key
+    var dt_threshold:float ## the time in seconds that a button can be pressed down again to be considered a double tap
+    var debug:bool ## do Debug stuff
+    func _init(action:String, double_tap_threshold:float=0.2, enable_debug:bool=false): ## init the action key
+        action_key = action
+        dt_threshold = double_tap_threshold
+        debug = enable_debug
+
+    var pressed:bool = false ## if the key is pressed
+    var time_pressed:float = 0 ## the time the key is held down for
+    var _last_press:float = 0 ## the time stamp when the key was last pressed down
+
+    signal on_press #signal on the key is pressed
+    signal on_release(pressed_time:float) #signal on the key is released
+    signal on_double_tap #signal on the key is double tapped
+    
+    func _update_pressed(event) -> void: ## update the pressed state of the key
+        if event.is_action_pressed(action_key): pressed = true
+        elif event.is_action_released(action_key): pressed = false
+
+    func input_update(event, time_stamp): ## update key stuff on event
+        _update_pressed(event) #update the pressed state of the key
+        
+        if event.is_action_pressed(action_key): #if the action key is pressed
+            if (time_stamp - _last_press) <= dt_threshold: #if the time since last press is applicable for a double tap (within the threshold) we emit the double tap signal
+                if debug: print(action_key+" double tapped") #debug
+                emit_signal("on_double_tap") #emit the on double tap signal for the controller
+
+            _last_press = time_stamp #set the press start time to the current time
+            if debug: print(action_key+" pressed") #debug
+            emit_signal("on_press") #emit the on press signal for the controller
+        if event.is_action_released(action_key): #if the action key is released
+            time_pressed = time_stamp - _last_press #get accurate time pressed
+            if debug: print(action_key+" released ("+str(time_pressed)+")") #debug
+            emit_signal("on_release", time_pressed) #emit the on release signal for the controller
+            time_pressed = 0 #reset the time pressed
+    
+    func unhandled_update(_event) -> void: ## the unhandled update of the key #TODO: I'm not sure what this is for yet
+        pass
+    
+    func process_update(delta) -> void: ## update key variables in process
+        if pressed: time_pressed += delta #if the key is pressed add the delta time to the time pressed (not as accurate as the time given in the on_release signal but good enough for most cases)
+
+    func connect_input(press:Callable, release:Callable, double_tap:Callable): ## connect the input signals to the given functions
+        self.connect("on_press", press)
+        self.connect("on_release", release)
+        self.connect("on_double_tap", double_tap)
+
+
+class ActionAxis: ## Helper class for handeling Axis Input between two action keys #TODO: this is pretty much just the ActionKeys version of the previous thing I made. I might need to clean this up in the future (like more signals and stuff)
+    var negative:ActionKey ## the negative action key
+    var positive:ActionKey ## the positive action key
+    var debug:bool ## do Debug stuff
+    func _init(negative_action:ActionKey, positive_action:ActionKey, enable_debug:bool=false):
+        positive = positive_action
+        negative = negative_action
+        debug = enable_debug
+    
+    var value:float = 0 ## the value of the axis (direction)
+
+    signal on_direction(direction:float) #signal on the axis is pressed
+
+    func input_update(): ## update the axis stuff on event (make sure to call this after the individal action keys have been updated)
+        var previous_direction = value #store the previous direction value
+
+        #NOTE: this is just for button presses not for analog input like a joystick which is fine for now but just saying if I wanna add controller support in the future
+        match [negative.pressed, positive.pressed]: #turn the negative and positive action keys into a direction value 
+            [true, false]: value = -1.0 #if negative is pressed and positive is not: direction = -1
+            [false, true]: value = 1.0 #if positive is pressed and negative is not: direction = 1
+            _:value = 0.0 #if both are pressed or none is pressed: direction = 0
+
+        if previous_direction != value and value != 0.0: #if it's a new direction and not 0
+            if previous_direction == 0.0 or (previous_direction < 0.0) != (value < 0.0): #if the previous direction was 0 or if the previous direction was negative and the current direction is positive or vice versa we emit the signal
+                if debug: print("Axis direction ("+negative.action_key+", "+positive.action_key+"): "+str(value)) #debug
+                emit_signal("on_direction", value) #emit the on press signal for the controller
+
+    func unhandled_update(_event) -> void: ## the unhandled update of the key #TODO: I'm not sure what this is for yet
+        pass
+    
+    func process_update(_delta) -> void: ## update key variables in process #Note: I don't think I need this yet
+        pass
+
+    func connect_input(direction:Callable): ## connect the input signals to the given functions
+        self.connect("on_direction", direction)
+    

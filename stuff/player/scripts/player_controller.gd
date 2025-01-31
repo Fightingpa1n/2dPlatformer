@@ -98,28 +98,50 @@ func _ready(): #Ready The player States and stuff
 	current_state = states[IdleState.id] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 
 	#connect InputSignals
-	InputManager.connect("left_pressed", _on_left)
-	InputManager.connect("right_pressed", _on_right)
-	InputManager.connect("horizontal_pressed", _on_horizontal)
-	InputManager.connect("up_pressed", _on_up)
-	InputManager.connect("down_pressed", _on_down)
-	InputManager.connect("vertical_pressed", _on_vertical)
-	InputManager.connect("jump_pressed", _on_jump)
-	InputManager.connect("run_pressed", _on_run)
-	InputManager.connect("crouch_pressed", _on_crouch)
+	InputManager.left.connect_input(_on_left_press, _on_left_release, _on_left_dt)
+	InputManager.right.connect_input(_on_right_press, _on_right_release, _on_right_dt)
+	InputManager.horizontal.connect_input(_on_horizontal_direction)
 
+	InputManager.up.connect_input(_on_up_press, _on_up_release, _on_up_dt)
+	InputManager.down.connect_input(_on_down_press, _on_down_release, _on_down_dt)
+	InputManager.vertical.connect_input(_on_vertical_direction)
+
+	InputManager.jump.connect_input(_on_jump_press, _on_jump_release, _on_jump_dt)
+	InputManager.run.connect_input(_on_run_press, _on_run_release, _on_run_dt)
+	InputManager.crouch.connect_input(_on_crouch_press, _on_crouch_release, _on_crouch_dt)
 
 #========== Input Signals ==========#
-func _on_left(): current_state.on_left() #left signal
-func _on_right(): current_state.on_right() #right signal
-func _on_horizontal(direction:float): current_state.on_horizontal(direction) #horizontal signal
-func _on_up(): current_state.on_up() #up signal
-func _on_down(): current_state.on_down() #down signal
-func _on_vertical(direction:float): current_state.on_vertical(direction) #vertical signal
-func _on_jump(): current_state.on_jump() #jump signal
-func _on_run(): current_state.on_run() #run signal
-func _on_crouch(): current_state.on_crouch() #crouch signal
+func _on_left_press(): current_state.on_left_press() #left|on press
+func _on_left_release(time_pressed: float): current_state.on_left_release(time_pressed) #left|on release
+func _on_left_dt(): current_state.on_left_doubletap() #left|double tap
 
+func _on_right_press(): current_state.on_right_press() #right|on press
+func _on_right_release(time_pressed: float): current_state.on_right_release(time_pressed) #right|on release
+func _on_right_dt(): current_state.on_right_doubletap() #right|double tap
+
+func _on_horizontal_direction(direction:float): current_state.on_horizontal_direction(direction) #horizontal|direction
+
+func _on_up_press(): current_state.on_up_press() #up|on press
+func _on_up_release(time_pressed: float): current_state.on_up_release(time_pressed) #up|on release
+func _on_up_dt(): current_state.on_up_doubletap() #up|double tap
+
+func _on_down_press(): current_state.on_down_press() #down|on press
+func _on_down_release(time_pressed: float): current_state.on_down_release(time_pressed) #down|on release
+func _on_down_dt(): current_state.on_down_doubletap() #down|double tap
+
+func _on_vertical_direction(direction:float): current_state.on_vertical_direction(direction) #vertical|direction
+
+func _on_jump_press(): current_state.on_jump_press() #jump|on press
+func _on_jump_release(time_pressed: float): current_state.on_jump_release(time_pressed) #jump|on release
+func _on_jump_dt(): current_state.on_jump_doubletap() #jump|double tap
+
+func _on_run_press(): current_state.on_run_press() #run|on press
+func _on_run_release(time_pressed: float): current_state.on_run_release(time_pressed) #run|on release
+func _on_run_dt(): current_state.on_run_doubletap() #run|double tap
+
+func _on_crouch_press(): current_state.on_crouch_press() #crouch|on press
+func _on_crouch_release(time_pressed: float): current_state.on_crouch_release(time_pressed) #crouch|on release
+func _on_crouch_dt(): current_state.on_crouch_doubletap() #crouch|double tap
 
 #========== States ==========#
 func add_state(state_class:GDScript): ## add a state to the state machine
@@ -167,7 +189,6 @@ func _state_changer(new_state_id:String) -> void: ## the statemashine function r
 		current_state = states[next_state_id] ## set the current state to the new state
 		current_state.enter() ## enter the new state
 		emit_signal("state_change", next_state_id) ## emit the state change signal
-		print("Changed State to: " + next_state_id) ## print the state change
 
 	_is_transitioning = false ## set the transitioning variable to false
 

@@ -32,17 +32,37 @@ func physics_process(_delta:float) -> void:
 	pass
 
 #================ INPUT METHODS ================#
-func on_left() -> void: pass ## called when left button is pressed
-func on_right() -> void: pass ## called when right button is pressed
-func on_horizontal(_direction:float) -> void: pass ## called when either left or right button is pressed. the passed float is the direction of the input so a range from -1 to 1 (0 if neither or both)
+func on_left_press() -> void: pass ## called when left button is pressed down
+func on_left_release(_time_pressed:float) -> void: pass ## called when left button is released (time_pressed is the time the button was pressed down for)
+func on_left_doubletap() -> void: pass ## called when left button is double tapped
 
-func on_up() -> void: pass ## called when up button is pressed
-func on_down() -> void: pass ## called when down button is pressed
-func on_vertical(_direction:float) -> void: pass ## called when either up or down button is pressed. the passed float is the direction of the input so a range from -1 to 1 (0 if neither or both)
+func on_right_press() -> void: pass ## called when right button is pressed down
+func on_right_release(_time_pressed:float) -> void: pass ## called when right button is released (time_pressed is the time the button was pressed down for)
+func on_right_doubletap() -> void: pass ## called when right button is double tapped
 
-func on_jump() -> void: pass ## called when jump button is pressed
-func on_run() -> void: pass ## called when run button is pressed
-func on_crouch() -> void: pass ## called when crouch button is pressed
+func on_horizontal_direction(_direction:float) -> void: pass ## called when either left or right button is pressed. the passed float is the direction of the input so a range from -1 to 1 (0 if neither or both)
+
+func on_up_press() -> void: pass ## called when up button is pressed down
+func on_up_release(_time_pressed:float) -> void: pass ## called when up button is released (time_pressed is the time the button was pressed down for)
+func on_up_doubletap() -> void: pass ## called when up button is double tapped
+
+func on_down_press() -> void: pass ## called when down button is pressed down
+func on_down_release(_time_pressed:float) -> void: pass ## called when down button is released (time_pressed is the time the button was pressed down for)
+func on_down_doubletap() -> void: pass ## called when down button is double tapped
+
+func on_vertical_direction(_direction:float) -> void: pass ## called when either up or down button is pressed. the passed float is the direction of the input so a range from -1 to 1 (0 if neither or both)
+
+func on_jump_press() -> void: pass ## called when jump button is pressed down
+func on_jump_release(_time_pressed:float) -> void: pass ## called when jump button is released (time_pressed is the time the button was pressed down for)
+func on_jump_doubletap() -> void: pass ## called when jump button is double tapped
+
+func on_run_press() -> void: pass ## called when run button is pressed down
+func on_run_release(_time_pressed:float) -> void: pass ## called when run button is released (time_pressed is the time the button was pressed down for)
+func on_run_doubletap() -> void: pass ## called when run button is double tapped
+
+func on_crouch_press() -> void: pass ## called when crouch button is pressed down
+func on_crouch_release(_time_pressed:float) -> void: pass ## called when crouch button is released (time_pressed is the time the button was pressed down for)
+func on_crouch_doubletap() -> void: pass ## called when crouch button is double tapped
 
 #================ HELPER METHODS ================#
 ## changes the player state to the state with the given name (defined in the player controller)
@@ -63,7 +83,7 @@ func apply_friction(delta:float, deceleration:float) -> void: ##physics method t
 
 ## TODO: come up with a description I'm too dumb right now
 func move(delta:float, max_speed:float, acceleration:float, deceleration:float) -> void:
-	var horizontal_input = InputManager.horizontal #get input
+	var horizontal_input = InputManager.horizontal.value #get input
 	if horizontal_input != 0: #if there is input
 		var _max_speed = max_speed * horizontal_input #set max speed to max speed times input
 		var _acceleration = acceleration * delta #set acceleration to acceleration times delta
