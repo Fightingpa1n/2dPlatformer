@@ -56,10 +56,6 @@ func on_jump_press() -> void: pass ## called when jump button is pressed down
 func on_jump_release(_time_pressed:float) -> void: pass ## called when jump button is released (time_pressed is the time the button was pressed down for)
 func on_jump_doubletap() -> void: pass ## called when jump button is double tapped
 
-func on_run_press() -> void: pass ## called when run button is pressed down
-func on_run_release(_time_pressed:float) -> void: pass ## called when run button is released (time_pressed is the time the button was pressed down for)
-func on_run_doubletap() -> void: pass ## called when run button is double tapped
-
 func on_crouch_press() -> void: pass ## called when crouch button is pressed down
 func on_crouch_release(_time_pressed:float) -> void: pass ## called when crouch button is released (time_pressed is the time the button was pressed down for)
 func on_crouch_doubletap() -> void: pass ## called when crouch button is double tapped

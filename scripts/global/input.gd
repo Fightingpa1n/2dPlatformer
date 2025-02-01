@@ -12,7 +12,6 @@ var down:ActionKey = ActionKey.new("down") ## move down action key
 var vertical:ActionAxis = ActionAxis.new(down, up) ## up/down(vertical) action axis
 
 var jump:ActionKey = ActionKey.new("jump") ## jump action key
-var run:ActionKey = ActionKey.new("run") ## run action key
 var crouch:ActionKey = ActionKey.new("crouch") ## crouch action key
 
 
@@ -35,7 +34,6 @@ func _input(event):
     vertical.input_update() #vertical
 
     jump.input_update(event, time_stamp) #jump
-    run.input_update(event, time_stamp) #run
     crouch.input_update(event, time_stamp) #crouch
 
     #========= CAMERA INPUT =========#
@@ -55,7 +53,6 @@ func _unhandled_input(event): #TODO: I'm not sure what exactly this is for and I
     vertical.unhandled_update(event) #vertical
 
     jump.unhandled_update(event) #jump
-    run.unhandled_update(event) #run
     crouch.unhandled_update(event) #crouch
 
     #========= CAMERA INPUT =========#
@@ -75,7 +72,6 @@ func _process(_delta): #maybe I need this in the future but for now I don't thin
     vertical.process_update(_delta) #vertical
 
     jump.process_update(_delta) #jump
-    run.process_update(_delta) #run
     crouch.process_update(_delta) #crouch
 
     #========= CAMERA INPUT =========#

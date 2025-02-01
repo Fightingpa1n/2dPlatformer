@@ -24,6 +24,8 @@ class_name PlayerController
 @export var CROUCH_SPEED = 150.0 ## the speed the player crouches at (at a maximum)
 @export var CROUCH_ACCELERATION = 3600.0 ## the movment acceleration when crouching
 @export var CROUCH_DECELERATION = 3600.0 ## the movment deceleration when crouching
+@export_subgroup("Slide Settings")
+@export var SLIDE_DECELERATION = 500.0 ## the deceleration applied to the player when sliding
 @export_subgroup("Air Movement Settings")
 @export var AIR_MOVE_SPEED = 300.0 ## the speed the player moves in the air (at a maximum)
 @export var AIR_MOVE_ACCELERATION = 3600.0 ## the movment acceleration in the air
@@ -93,6 +95,7 @@ func _ready(): #Ready The player States and stuff
 	add_state(WalkState)
 	add_state(RunState)
 	add_state(CrouchState)
+	add_state(SlideState)
 	add_state(FallState)
 
 	current_state = states[IdleState.id] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
@@ -107,7 +110,6 @@ func _ready(): #Ready The player States and stuff
 	InputManager.vertical.connect_input(_on_vertical_direction)
 
 	InputManager.jump.connect_input(_on_jump_press, _on_jump_release, _on_jump_dt)
-	InputManager.run.connect_input(_on_run_press, _on_run_release, _on_run_dt)
 	InputManager.crouch.connect_input(_on_crouch_press, _on_crouch_release, _on_crouch_dt)
 
 #========== Input Signals ==========#
@@ -134,10 +136,6 @@ func _on_vertical_direction(direction:float): current_state.on_vertical_directio
 func _on_jump_press(): current_state.on_jump_press() #jump|on press
 func _on_jump_release(time_pressed: float): current_state.on_jump_release(time_pressed) #jump|on release
 func _on_jump_dt(): current_state.on_jump_doubletap() #jump|double tap
-
-func _on_run_press(): current_state.on_run_press() #run|on press
-func _on_run_release(time_pressed: float): current_state.on_run_release(time_pressed) #run|on release
-func _on_run_dt(): current_state.on_run_doubletap() #run|double tap
 
 func _on_crouch_press(): current_state.on_crouch_press() #crouch|on press
 func _on_crouch_release(time_pressed: float): current_state.on_crouch_release(time_pressed) #crouch|on release
@@ -186,6 +184,7 @@ func _state_changer(new_state_id:String) -> void: ## the statemashine function r
 			current_state.exit() ## exit the current state
 			previous_state = current_state ## set the previous state to the current state
 
+		print("Changing State to: "+next_state_id) ## print the state change
 		current_state = states[next_state_id] ## set the current state to the new state
 		current_state.enter() ## enter the new state
 		emit_signal("state_change", next_state_id) ## emit the state change signal

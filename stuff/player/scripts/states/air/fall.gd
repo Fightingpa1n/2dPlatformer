@@ -6,15 +6,13 @@ static var id = "fall"
 
 func enter():
     collision.toggle_jump_buffer_ray(true) #enable jump buffer ray
-    pass
 
 func exit():
     collision.toggle_jump_buffer_ray(false) #disable jump buffer ray
-    pass
 
 func physics_process(delta):
     #wall_check()
-    ground_check()
+    if ground_check(): return #do the ground check (if state change occured return)
     # if player.total_velocity().y < 0:
     #     player.change_state("ascend")
 

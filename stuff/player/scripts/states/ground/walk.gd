@@ -5,19 +5,18 @@ static var id = "walk"
 #Walking on the ground (it's pretty self explanatory)
 
 func physics_process(delta):
-    ground_check() #do the ground check
+    if !ground_check(): return #do the ground check (if state change occured return)
 
-    if player.total_velocity().x == 0: #if we aren't moving we should be idle
-        change_state(IdleState.id)
-    
-    if InputManager.run.pressed: #if the player is running
-        change_state(RunState.id) #change to run state
+    if !InputManager.left.pressed and !InputManager.right.pressed: #if no input is pressed
+        if player.total_velocity().x == 0: #once we stoped after no input
+            change_state(IdleState.id) #change to idle state
+            return
     
     move(delta) #move the player (ground defaults)
     
     apply_friction(delta) #apply friction to the player (ground defaults)
 
-func on_run_press() -> void: #on run input
-    change_state(RunState.id) #change to run state
+func on_left_doubletap(): change_state(RunState.id) #change to run on double tap
+func on_right_doubletap(): change_state(RunState.id) #change to run on double tap
     
 

@@ -20,9 +20,11 @@ class_name ParentState_Air
 #         if player.movement_velocity.x != 0 and player.movement_velocity.x != wall_direction:
 #             player.change_state("walled")
 
-func ground_check(): #function to check for ground and change state if needed
+func ground_check() -> bool: ## check if the player is still on the ground returns true if a state change has occured 
     if collision.is_touching_ground():
         change_state(IdleState.id)
+        return true
+    else: return false
 
 
 
