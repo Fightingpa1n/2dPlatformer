@@ -97,8 +97,10 @@ func _ready(): #Ready The player States and stuff
 	add_state(CrouchState)
 	add_state(SlideState)
 	add_state(FallState)
+	add_state(FastFallState)
+	add_state(AscendState)
 
-	current_state = states[IdleState.id] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
+	current_state = states[IdleState.id()] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 
 	#connect InputSignals
 	InputManager.left.connect_input(_on_left_press, _on_left_release, _on_left_dt)
@@ -149,17 +151,17 @@ func add_state(state_class:GDScript): ## add a state to the state machine
 		printerr("Trying to add a state that is not a PlayerState: " + state_instance)
 		return
 
-	if not state_instance.id: #check if the state has an id
+	if not state_instance.id(): #check if the state has an id
 		printerr("State has no id, make sure it has a static id variable: " + state_instance)
 		return
 	
-	if state_instance.id in states: #check if the state is already in the state machine
-		printerr("State with this id already exists: " + state_instance.id)
+	if state_instance.id() in states: #check if the state is already in the state machine
+		printerr("State with this id already exists: " + state_instance.id())
 		return
 
 	state_instance.player = self #set the player reference
 	state_instance.collision = collision #set the collision reference
-	states[state_instance.id] = state_instance
+	states[state_instance.id()] = state_instance
 
 #========== State Machine ==========#
 var _state_queue = [] ## the queue of states to change to
@@ -234,8 +236,8 @@ func _process(delta): current_state.normal_process(delta) #normal process
 #========== Helper Functions ==========#
 func total_velocity() -> Vector2: return velocity + movement_velocity + other_velocity ##returns the total of all velocitys combined, to see how fast the player is going in total 
 
-func get_current_state() -> String: return current_state.id ## returns the id of the current state
-func get_previous_state() -> String: return previous_state.id ## returns the id of the previous state
+func get_current_state() -> String: return current_state.id() ## returns the id of the current state
+func get_previous_state() -> String: return previous_state.id() ## returns the id of the previous state
 
 #TODO: make a change state function where you can define a parent state like grounded or air
 #      and it will then automatically change to the correct state that extends said parent state

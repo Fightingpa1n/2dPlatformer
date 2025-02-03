@@ -22,7 +22,7 @@ class_name ParentState_Air
 
 func ground_check() -> bool: ## check if the player is still on the ground returns true if a state change has occured 
     if collision.is_touching_ground():
-        change_state(IdleState.id)
+        change_state(IdleState.id())
         return true
     else: return false
 

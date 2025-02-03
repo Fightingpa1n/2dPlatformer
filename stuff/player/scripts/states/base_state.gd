@@ -1,6 +1,7 @@
 extends Node
 class_name PlayerState 
 
+static func id() -> String: return "" ## returns the id of the state (please override this each state to return the id)
 ## the parent state for all player states! (contains all base methods and variables)
 
 #================ INIT ================#

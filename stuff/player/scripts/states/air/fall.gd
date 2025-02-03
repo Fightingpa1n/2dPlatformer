@@ -1,7 +1,7 @@
 extends ParentState_Air
 class_name FallState
 
-static var id = "fall"
+static func id() -> String: return "fall" #id
 #while in the air whith a negative y velocity (aka. are falling down)
 
 func enter():
