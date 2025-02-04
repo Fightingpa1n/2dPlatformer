@@ -6,6 +6,7 @@ static func id() -> String: return "ascend" #id
 #since jump is only moving up and ascencd is slowliwly going down (that's oversimplified but that's basically it.)
 
 func enter():
+	super() #call the air state enter function
 	collision.toggle_head_rays(true) #enable head rays
 
 func exit():
@@ -19,16 +20,14 @@ func physics_process(delta):
 	ledge_forgivness() #call ledge forgivness
 
 
-	if InputManager.down.pressed: #while holding down the player will fast fall
-		apply_gravity(delta, player.FASTFALL_SPEED, player.FASTFALL_ACCELERATION) #apply fast fall gravity
-		if player.total_velocity().y > 0:
-			# change_state("fast_fall")
-			return
-	else:
-		apply_gravity(delta) #apply regular gravity
-		if player.total_velocity().y > 0:
-			change_state(FallState.id())
-			return
+	# if InputManager.down.pressed: #while holding down the player will fast fall
+	# 	if player.total_velocity().y > 0:
+	# 		# change_state("fast_fall")
+	# 		return
+	apply_gravity(delta) #apply regular gravity
+	if player.total_velocity().y > 0:
+		change_state(FallState.id())
+		return
 
 	move(delta)
 

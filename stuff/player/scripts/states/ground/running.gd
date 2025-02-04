@@ -4,10 +4,16 @@ class_name RunState
 static func id() -> String: return "run" #id
 #Running on the ground (it's pretty self explanatory)
 
+func enter(): 
+    super() #call the ground state enter function
+    player.max_move_speed = player.RUN_SPEED #set the max move speed to run speed
+    player.move_acceleration = player.RUN_ACCELERATION #set the move acceleration to run acceleration
+    player.move_deceleration = player.RUN_DECELERATION #set the move deceleration to run deceleration
+
 func physics_process(delta):
     if !ground_check(): return #do the ground check (if state change occured return)
 
-    move(delta, player.RUN_SPEED, player.RUN_ACCELERATION, player.RUN_DECELERATION) #move the player
+    move(delta) #move the player
 
     if (!InputManager.left.pressed and !InputManager.right.pressed): #if move input is realeased
         change_state(WalkState.id()) #change to walk state
@@ -23,6 +29,10 @@ func physics_process(delta):
         return
     
     apply_friction(delta) #apply friction to the player (ground defaults)
+
+func on_jump_press(): #on jump override from grounded state
+    change_state(JumpState.id()) #change to jump state
+    return
 
 func on_crouch_press() -> void: #on crouch input
     print("entered crouch from run") #debug

@@ -53,7 +53,7 @@ func _ready():
 	ray_jump_buffer = _create_ray("jump_buffer", Vector2(0, shape_size.y/2), Vector2(0, player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH))
 
 func _create_ray(ray_name:String, start_pos:Vector2, end_pos:Vector2) -> RayCast2D: #private function to create a ray
-	#print("creating ray: ", ray_name)
+	# print("creating ray: ", ray_name)
 	var ray = RayCast2D.new()
 	ray.name = ray_name
 	ray.position = start_pos
@@ -160,4 +160,3 @@ func jump_buffer_update_length(new_length:float) -> void: #updates the length of
 func did_jump_buffer_hit() -> bool:
 	ray_jump_buffer.force_raycast_update()
 	return ray_jump_buffer.is_colliding()
-

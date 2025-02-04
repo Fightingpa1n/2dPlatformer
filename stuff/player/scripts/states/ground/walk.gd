@@ -18,5 +18,3 @@ func physics_process(delta):
 
 func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
 func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap
-    
-

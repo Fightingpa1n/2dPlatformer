@@ -3,74 +3,156 @@ class_name PlayerController
 
 #this is the main Player Controller script containing values, functions and being responsible for the state machine
 
-#=== constant values ===# #TODO: clean up values (especially the names)
-@export_category("Player Settings")
-@export_group("Physics Settings")
-@export var FALL_SPEED = 500.0 #the speed the player falls at (at a maximum)
-@export var FALL_ACCELERATION = 1030.0 #the acceleration applied to the fall speed (basically it's just a fancy way of saying gravity)
-@export_subgroup("Friction")
-@export var GROUND_FRICTION = 3600.0 ## the deceleration applied to velocitys when the player is on the ground
-@export var AIR_FRICTION = 3600.0 ## the deceleration applied to velocitys when the player is in the air
+#=== constant values ===# #TODO: finish clean up
+# @export_category("Old Player Settings")
+# @export_group("Physics Settings")
+# @export var FALL_SPEED = 500.0 #the speed the player falls at (at a maximum)
+# @export var FALL_ACCELERATION = 1030.0 #the acceleration applied to the fall speed (basically it's just a fancy way of saying gravity)
+# @export_subgroup("Friction")
+# @export var GROUND_FRICTION = 3600.0 ## the deceleration applied to velocitys when the player is on the ground
+# @export var AIR_FRICTION = 3600.0 ## the deceleration applied to velocitys when the player is in the air
 
-@export_group("Movement Settings")
-@export var WALK_SPEED = 300.0 ## the speed the player walks at (at a maximum)
-@export var GROUND_MOVE_ACCELERATION = 3600.0 ## the movment acceleration on the ground
-@export var GROUND_MOVE_DECELERATION = 3600.0 ## the movment deceleration on the ground
-@export_subgroup("Run Settings")
-@export var RUN_SPEED = 600.0 ## the speed the player runs at (at a maximum)
-@export var RUN_ACCELERATION = 3600.0 ## the movment acceleration when running
-@export var RUN_DECELERATION = 3600.0 ## the movment deceleration when running
-@export_subgroup("Crouch Settings")
-@export var CROUCH_SPEED = 150.0 ## the speed the player crouches at (at a maximum)
-@export var CROUCH_ACCELERATION = 3600.0 ## the movment acceleration when crouching
-@export var CROUCH_DECELERATION = 3600.0 ## the movment deceleration when crouching
-@export_subgroup("Slide Settings")
-@export var SLIDE_DECELERATION = 500.0 ## the deceleration applied to the player when sliding
-@export_subgroup("Air Movement Settings")
-@export var AIR_MOVE_SPEED = 300.0 ## the speed the player moves in the air (at a maximum)
-@export var AIR_MOVE_ACCELERATION = 3600.0 ## the movment acceleration in the air
-@export var AIR_MOVE_DECELERATION = 3600.0 ## the movment deceleration in the air
+# @export_group("Movement Settings")
+# @export var WALK_SPEED = 300.0 ## the speed the player walks at (at a maximum)
+# @export var GROUND_MOVE_ACCELERATION = 3600.0 ## the movment acceleration on the ground
+# @export var GROUND_MOVE_DECELERATION = 3600.0 ## the movment deceleration on the ground
+# @export_subgroup("Run Settings")
+# @export var RUN_SPEED = 600.0 ## the speed the player runs at (at a maximum)
+# @export var RUN_ACCELERATION = 3600.0 ## the movment acceleration when running
+# @export var RUN_DECELERATION = 3600.0 ## the movment deceleration when running
+# @export_subgroup("Crouch Settings")
+# @export var CROUCH_SPEED = 150.0 ## the speed the player crouches at (at a maximum)
+# @export var CROUCH_ACCELERATION = 3600.0 ## the movment acceleration when crouching
+# @export var CROUCH_DECELERATION = 3600.0 ## the movment deceleration when crouching
+# @export_subgroup("Slide Settings")
+# @export var SLIDE_DECELERATION = 500.0 ## the deceleration applied to the player when sliding
+# @export_subgroup("Air Movement Settings")
+# @export var AIR_MOVE_SPEED = 300.0 ## the speed the player moves in the air (at a maximum)
+# @export var AIR_MOVE_ACCELERATION = 3600.0 ## the movment acceleration in the air
+# @export var AIR_MOVE_DECELERATION = 3600.0 ## the movment deceleration in the air
 
-@export_group("Jump Settings")
-@export var JUMP_FORCE = 400.0 #the force applied to the player when jumping
-@export var MIN_JUMP_TIME = 0.1 #the time the jump force is applied minumum when pressing the jump button
-@export var MAX_JUMP_TIME = 0.5 #the time the jump button can be held down after the minimum was reached to apply the jump force
-@export_subgroup("Double Jump stuff")
-@export var EXTRA_JUMPS = 1 #the amount of extra jumps the player can do (0 = no extra jumps)
+# @export_group("Jump Settings")
+# @export var JUMP_FORCE = 400.0 #the force applied to the player when jumping
+# @export var MIN_JUMP_TIME = 0.1 #the time the jump force is applied minumum when pressing the jump button
+# @export var MAX_JUMP_TIME = 0.5 #the time the jump button can be held down after the minimum was reached to apply the jump force
+# @export_subgroup("Double Jump stuff")
+# @export var EXTRA_JUMPS = 1 #the amount of extra jumps the player can do (0 = no extra jumps)
 
-@export_group("Wall Settings")
-@export var WALL_SLIDE_SPEED:float = 100.0
-@export var WALL_SLIDE_SPEED_FAST:float = 150.0
-@export var WALL_SLIDE_SPEED_SLOW:float = 50.0
-@export var WALL_SLIDE_ACCELERATION:float = 3600.0
-@export var WALL_SLIDE_DECELERATION:float = 3600.0
-@export_subgroup("Reset Settings")
-@export var RESET_JUMP_COUNTER_ON_WALL:bool = false
-@export_subgroup("Wall Jump Settings")
-@export var WALL_JUMP_FORCE:float = 400.0
-@export var WALL_JUMP_DIRECTION:Vector2 = Vector2(-1, -1) #in this value persumes that the wall is on the left and the player is jumping right
+# @export_group("Wall Settings")
+# @export var WALL_SLIDE_SPEED:float = 100.0
+# @export var WALL_SLIDE_SPEED_FAST:float = 150.0
+# @export var WALL_SLIDE_SPEED_SLOW:float = 50.0
+# @export var WALL_SLIDE_ACCELERATION:float = 3600.0
+# @export var WALL_SLIDE_DECELERATION:float = 3600.0
+# @export_subgroup("Reset Settings")
+# @export var RESET_JUMP_COUNTER_ON_WALL:bool = false
+# @export_subgroup("Wall Jump Settings")
+# @export var WALL_JUMP_FORCE:float = 400.0
+# @export var WALL_JUMP_DIRECTION:Vector2 = Vector2(-1, -1) #in this value persumes that the wall is on the left and the player is jumping right
 
-@export_group("Raycast Settings")
-@export var CEILING_RAYCAST_LENGTH = 2.5 #the length of the raycast for the ceiling check
-@export var WALL_RAYCAST_LENGTH = 2.5 #the length of the raycast for the wall check
-@export var FLOOR_RAYCAST_LENGTH = 2.5 #the length of the raycast for the floor check
-@export_flags_2d_physics var RAYCAST_COLLISION_MASK = 1 #the collision mask for the collision checks
-@export_subgroup("Jump Buffer Settings")
-@export var JUMP_BUFFER_RAYCAST_INITAL_LENGTH = 20.0 #the inital length of the raycast for the jump buffer
-@export var JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER = 100.0 #bassically how much the velocity influences the length of the raycast
+# @export_group("Raycast Settings")
+# @export var CEILING_RAYCAST_LENGTH = 2.5 #the length of the raycast for the ceiling check
+# @export var WALL_RAYCAST_LENGTH = 2.5 #the length of the raycast for the wall check
+# @export var FLOOR_RAYCAST_LENGTH = 2.5 #the length of the raycast for the floor check
+# @export_flags_2d_physics var RAYCAST_COLLISION_MASK = 1 #the collision mask for the collision checks
+# @export_subgroup("Jump Buffer Settings")
+# @export var JUMP_BUFFER_RAYCAST_INITAL_LENGTH = 20.0 #the inital length of the raycast for the jump buffer
+# @export var JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER = 100.0 #bassically how much the velocity influences the length of the raycast
 
-@export_group("Abilities (or just other stuff idk)")
-@export_subgroup("fastfall thingy") #todo: find a better name
-@export var FASTFALL_SPEED = 1000.0
-@export var FASTFALL_ACCELERATION = 2060.0
-@export_subgroup("coyote_time")
-@export var COYOTE_TIME = 0.1
+# @export_group("Abilities (or just other stuff idk)")
+# @export_subgroup("fastfall thingy")
+# @export var FASTFALL_SPEED = 1000.0
+# @export var FASTFALL_ACCELERATION = 2060.0
+# @export_subgroup("coyote_time")
+# @export var COYOTE_TIME = 0.1
+
+
+#========= CLEANED UP VALUES =========# (above are all the old values that are still used but not cleaned up yet. bellow are the new cleaned up values)
+@export_category("Physics") ## Physic values
+@export var GRAVITY:float = 1200.0 ## the normal Gravity applied to the player (bassically the downward acceleration and up deceleration)
+@export var MAX_FALL_SPEED:float = 500.0 ## the maximum speed the player can fall at
+@export_group("Friction") ## Friction is the value used to slow down player velocity
+@export var GROUND_FRICTION:float = 3600.0 ## the deceleration applied to velocitys when the player is on the ground
+@export var AIR_FRICTION:float = 3600.0 ## the deceleration applied to velocitys when the player is in the air
+
+
+@export_category("Movement") ## Movement related values
+
+@export_group("Move") ## Movment acceleration, deceleration and speed values for different states
+@export var WALK_SPEED:float = 300.0 ## the speed the player walks at (at a maximum)
+@export var WALK_ACCELERATION:float = 3600.0 ## the movment acceleration on the ground
+@export var WALK_DECELERATION:float = 3600.0 ## the movment deceleration on the ground
+@export var RUN_SPEED:float = 600.0 ## the speed the player runs at (at a maximum)
+@export var RUN_ACCELERATION:float = 3600.0 ## the movment acceleration when running
+@export var RUN_DECELERATION:float = 3600.0 ## the movment deceleration when running
+@export var CROUCH_SPEED:float = 150.0 ## the speed the player crouches at (at a maximum)
+@export var CROUCH_ACCELERATION:float = 3600.0 ## the movment acceleration when crouching
+@export var CROUCH_DECELERATION:float = 3600.0 ## the movment deceleration when crouching
+@export var AIR_SPEED:float = 300.0 ## the speed the player moves in the air (at a maximum)
+@export var AIR_ACCELERATION:float = 3600.0 ## the movment acceleration in the air
+@export var AIR_DECELERATION:float = 3600.0 ## the movment deceleration in the air
+
+@export_group("Jump") ## Jump related values
+@export var JUMP_FORCE:float = 400.0 ## Initial jump force applied to the player
+@export var JUMP_GRAVITY:float = 0.0 ## Gravity at the start of the jump
+@export var JUMP_TIME:float = 0.5 ## Time for gravity to reach its normal value
+@export var RELEASE_GRAVITY:float = 1800.0 ## Gravity applied if the player releases jump early (to make it more snappy)
+
+@export_group("Slide") ## Slide related values
+@export var SLIDE_DECELERATION:float = 500.0 ## the deceleration applied to the player when sliding
+
+@export_category("Collision") ## Collision related values
+
+@export_group("Raycast") ## Raycast related values
+@export var CEILING_RAYCAST_LENGTH:float = 2.5 ## the length of the raycast for the ceiling check
+@export var WALL_RAYCAST_LENGTH:float = 2.5 ## the length of the raycast for the wall check
+@export var FLOOR_RAYCAST_LENGTH:float = 2.5 ## the length of the raycast for the floor check
+@export_flags_2d_physics var RAYCAST_COLLISION_MASK:int = 2 ## the collision mask for the collision checks
+
+@export_group("Jump Buffer") ## Jump Buffer related values
+@export var JUMP_BUFFER_RAYCAST_INITAL_LENGTH:float = 20.0 ## the inital length of the raycast for the jump buffer
+@export var JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER:float = 100.0 ## bassically how much the velocity influences the length of the raycast
+
 
 #TODO: Playtest alot and find better values
 
-#=== player variables ===#
+#=== player velocitys ===#
 var movement_velocity = Vector2() #the velocity for movement
 var other_velocity = Vector2() #the velocity for other stuff like powaaa
+
+
+#=== global player vars ===#
+var gravity:float = GRAVITY ## the current gravity applied to the player
+var max_fall_speed:float = MAX_FALL_SPEED ## the current maximum fall speed of the player
+var friction:float = GROUND_FRICTION ## the current friction applied to the player
+var max_move_speed:float = WALK_SPEED ## the current maximum move speed of the player
+var move_acceleration:float = WALK_ACCELERATION ## the current move acceleration of the player
+var move_deceleration:float = WALK_DECELERATION ## the current move deceleration of the player
+var jump_force:float = JUMP_FORCE ## the current jump force of the player
+
+#========== Movement Functions ==========#
+func apply_gravity(delta:float) -> void: ## apply gravity to the player by accelerating the fall speed until it reaches the given max fall speed, uses the global gravity value
+	velocity.y = move_toward(velocity.y, max_fall_speed, gravity*delta)
+
+func apply_friction(delta:float) -> void: ## apply friction to the player by slowing down velocity and other velocity until it reaches 0, uses the global friction value
+	if abs(velocity.x) > 0: velocity.x = move_toward(velocity.x, 0, friction * delta)
+	if abs(other_velocity.x) > 0: other_velocity.x = move_toward(other_velocity.x, 0, friction * delta)
+
+func move(delta:float) -> void: ## move function for the player, modifies the movement velocity based on input and uses the global values to determine max speed, acceleration and deceleration
+	var horizontal_input = InputManager.horizontal.value #get input
+	if horizontal_input != 0: #if there is input
+		var _max_speed = max_move_speed*horizontal_input #set max speed to max speed times input
+		var _acceleration = move_acceleration * delta #set acceleration to acceleration times delta
+		movement_velocity.x = move_toward(movement_velocity.x, _max_speed, _acceleration)
+	elif abs(movement_velocity.x) > 0: #if there is no input (and we are still moving)
+		var _deceleration = move_deceleration * delta #set deceleration to deceleration times delta
+		movement_velocity.x = move_toward(movement_velocity.x, 0, _deceleration)
+
+func slow_down(delta:float) -> void: ## slow down the players movement velocity down to 0 by the global deceleration value (just the stop part of the move function)
+	if abs(movement_velocity.x) > 0: #if there is no input (and we are still moving)
+		var _deceleration = move_deceleration * delta #set deceleration to deceleration times delta
+		movement_velocity.x = move_toward(movement_velocity.x, 0, _deceleration)
+
 
 #=== player state variables ===# (used by the differnet individual states) #Note: maybe I should change the way this works to dynamically do that so they get added to like a list or something and only get used while active or something like that
 var jump_time = 0.0
@@ -79,6 +161,10 @@ var coyote_time_time= 0.0
 var jump_counter = 0
 
 @onready var collision:PlayerCollision = %collision ## the collision object for the player (that handles collisions and raycasts)
+
+
+
+
 
 #=== debug signals ===# #currrently unused #TODO: Add Debug Stuff again so signals are used again
 signal state_change(state_name:String)
@@ -99,6 +185,7 @@ func _ready(): #Ready The player States and stuff
 	add_state(FallState)
 	add_state(FastFallState)
 	add_state(AscendState)
+	add_state(JumpState)
 
 	current_state = states[IdleState.id()] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 
@@ -232,6 +319,18 @@ func _physics_process(delta): #physics process
 
 
 func _process(delta): current_state.normal_process(delta) #normal process
+
+
+
+
+
+
+
+
+
+
+
+
 
 #========== Helper Functions ==========#
 func total_velocity() -> Vector2: return velocity + movement_velocity + other_velocity ##returns the total of all velocitys combined, to see how fast the player is going in total 

@@ -5,6 +5,7 @@ static func id() -> String: return "fall" #id
 #while in the air whith a negative y velocity (aka. are falling down)
 
 func enter():
+    super() #call the air state enter function
     collision.toggle_jump_buffer_ray(true) #enable jump buffer ray
 
 func exit():

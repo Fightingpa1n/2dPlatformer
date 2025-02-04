@@ -4,6 +4,10 @@ class_name SlideState
 static func id() -> String: return "slide" #id
 #Sliding on the ground. like when running and then you enter crouching while running you will slide    
 
+func enter():
+    super() #call the ground state enter function
+    player.move_deceleration = player.SLIDE_DECELERATION #set the move deceleration to slide deceleration
+
 func physics_process(delta):
     if !ground_check(): return #do the ground check (if state change occured return)
     
@@ -16,8 +20,8 @@ func physics_process(delta):
             return
     
     # Apply slide deceleration
-    player.movement_velocity.x = move_toward(player.movement_velocity.x, 0, player.SLIDE_DECELERATION * delta)
-    
+    slow_down(delta)
+
     if !InputManager.crouch.pressed: #if the crouch key is released
         change_state(WalkState.id()) #change to walk state
         return

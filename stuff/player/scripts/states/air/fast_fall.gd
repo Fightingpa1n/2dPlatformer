@@ -4,6 +4,11 @@ class_name FastFallState
 static func id() -> String: return "fast_fall" #id
 #this is the fastfall groundpound thingy #TODO: I need to find a better name for this state
 
+func enter():
+    super() #call the fall state enter function
+    # player.gravity = 
+    # player.max_fall_speed = 
+
 func physics_process(delta):
     
     if ground_check(): return #do the ground check (if state change occured return)
@@ -12,7 +17,7 @@ func physics_process(delta):
         change_state(FallState.id()) #change to fall state
         return
     
-    apply_gravity(delta, player.FASTFALL_SPEED, player.FASTFALL_ACCELERATION) #apply fast fall gravity
+    apply_gravity(delta) #apply fast fall gravity
 
     move(delta) #while falling we are allowed to move
 

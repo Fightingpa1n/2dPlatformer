@@ -3,6 +3,12 @@ class_name ParentState_Air
 
 #The Parentstate for any Air States meaning the way how physics work in the air is defined here
 
+func enter(): #on enter set global vars to air values
+    player.max_move_speed = player.AIR_SPEED
+    player.move_acceleration = player.AIR_ACCELERATION
+    player.move_deceleration = player.AIR_DECELERATION
+    player.friction = player.AIR_FRICTION
+
 # func normal_process(delta): #TODO: clean up
 #     if player.coyote_time_time > 0:
 #         player.coyote_time_time -= delta
@@ -42,14 +48,3 @@ func on_jump(): #on jump input
     #     return true
     # else:
     #     return false
-
-#helper methods with default values for grounded states
-func move(delta:float,
-    max_speed:float = player.AIR_MOVE_SPEED,
-    acceleration:float = player.AIR_MOVE_ACCELERATION,
-    deceleration:float = player.AIR_MOVE_DECELERATION
-) -> void:
-    super(delta, max_speed, acceleration, deceleration) #call the move function from the parent state
-
-func apply_friction(delta:float, deceleration:float=player.AIR_FRICTION) -> void: #apply friction to the player
-    super(delta, deceleration) #call the apply friction function from the parent state
