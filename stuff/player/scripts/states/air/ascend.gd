@@ -14,22 +14,24 @@ func exit():
 
 
 func physics_process(delta):
+	super(delta) #call the air state physics process (mostly for gravity reset)
 	# wall_check()
 
 	if ceiling_hit(): return #check if the player is hitting the ceiling (if state change occured return)
+
+	if player.total_velocity().y > 0:
+		change_state(FallState.id())
+		return
+	
 	ledge_forgivness() #call ledge forgivness
 
+	move(delta)
 
 	# if InputManager.down.pressed: #while holding down the player will fast fall
 	# 	if player.total_velocity().y > 0:
 	# 		# change_state("fast_fall")
 	# 		return
-	apply_gravity(delta) #apply regular gravity
-	if player.total_velocity().y > 0:
-		change_state(FallState.id())
-		return
 
-	move(delta)
 
 
 func ceiling_hit() -> bool: ## check if the player is hitting the ceiling
@@ -50,6 +52,6 @@ func ledge_forgivness(): ##do ledge forgivness when accending
 			player.position.x += direction * 0.1
 			ray.force_raycast_update()
 
-# func on_input_jump():
-# 	if not super():
-# 		double_jump()
+func on_jump_press():
+	if coyote_jump(): return #coyote jump (probably not needed in the ascend state)
+	if air_jump(): return #air jump

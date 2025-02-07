@@ -12,23 +12,75 @@ func exit():
     collision.toggle_jump_buffer_ray(false) #disable jump buffer ray
 
 func physics_process(delta):
+    super(delta) #call the air state physics process (mostly for gravity reset)
     #wall_check()
-    if ground_check(): return #do the ground check (if state change occured return)
-    # if player.total_velocity().y < 0:
-    #     player.change_state("ascend")
-
-    # if Input.is_action_pressed("down"):
-    #     player.change_state("fast_fall")
-    #     return
     
-    apply_friction(delta) #apply friction to the player (air defaults)
+    if ground_check(): return #do the ground check (if state change occured return)
+
+    if player.total_velocity().y < 0: #if we are moving upwards, change to ascend state
+        change_state(AscendState.id())
+        return
 
     move(delta) #move the player (air defaults)
 
-    apply_gravity(delta) #apply gravity to the player
+
+func on_jump_press():
+    if coyote_jump(): return #coyote jump
+
+    #Buffer Jump
+    if Settings.jump_buffer_mode == Settings.JumpBufferMode.TIMED: #when set to timed (we check air jump first since we don't care about the floor we land on and it could be dangerous)
+        if air_jump(): return #air jump (if air jump is possible it will change state so we return)
+        else: #if air jump not possible
+            player.buffer_timer = player.BUFFER_TIME #set the buffer timer
+            player.buffer_jump = true #set the buffer jump to true
+            print("buffered jump")
+            return
+    
+    elif Settings.jump_buffer_mode == Settings.JumpBufferMode.DYNAMIC: #if set to dynamic
+        # var new_length = player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH * (player.JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER * player.total_velocity().y) #calculate lenght based on velocity
+        var new_length = player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH #TODO: I broke the calculation somehow
+        collision.jump_buffer_update_length(new_length) #update the length of the jump buffer ray
+        if collision.did_jump_buffer_hit(): #if jump buffer hit something
+
+            if collision.save_to_land(): #check if save to land
+                player.buffer_timer = player.BUFFER_TIME #set the buffer timer
+                player.buffer_jump = true #set the buffer jump to true
+                print("buffered jump")
+                return
+
+            else: #if not save to land
+                if air_jump(): return #air jump
+
+                else: #if air jump not possible
+                    player.buffer_timer = player.BUFFER_TIME #set the buffer timer
+                    player.buffer_jump = true #set the buffer jump to true
+                    print("buffered jump")
+                    return
+
+        else: #if jump buffer did not hit
+            if air_jump(): return #air jump
+
+            else: #if air jump not possible
+                player.buffer_timer = player.BUFFER_TIME #set the buffer timer
+                player.buffer_jump = true #set the buffer jump to true
+                print("buffered jump")
+                return
 
 
-func on_jump():
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     pass
     # if super(): return #cyote jump check from parent
 

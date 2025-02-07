@@ -151,12 +151,16 @@ func get_wall_direction() -> int: #this is pretty bad espeshally since it's hard
 		return 0
 
 
-#===== collision checks =====#
+#============================== Jump Buffer ==============================#
 func jump_buffer_update_length(new_length:float) -> void: #updates the length of the jump buffer ray
 	#ray_jump_buffer.target_position.y = (player.JUMP_BUFFER_RAYCAST_INITAL_LENGTH/player.JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER) * player.total_velocity().y #this is the old code where I directly made the calculation in here instead of passing it
-	ray_jump_buffer.target_position.y = min(new_length, 0) #update length
+	print("new_length: ", new_length)
+	ray_jump_buffer.target_position.y = max(new_length, 0) #update length
 	ray_jump_buffer.force_raycast_update()
 
 func did_jump_buffer_hit() -> bool:
 	ray_jump_buffer.force_raycast_update()
 	return ray_jump_buffer.is_colliding()
+
+func save_to_land() -> bool: ## check if the player is save to land on the ground (Note: since everything is currently save to land, this is just a placeholder)
+	return true
