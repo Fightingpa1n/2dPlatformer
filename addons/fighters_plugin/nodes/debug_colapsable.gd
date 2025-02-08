@@ -1,9 +1,15 @@
 @tool
-extends DebugContainer
+extends VBoxContainer
 class_name DebugColapsable
 
 var title:String
 var expanded:bool
+
+@export var start_expanded:bool = false:
+	set(value):
+		start_expanded = value
+		expanded = value
+		_update()
 
 var _toggle_button:Button
 var expand_ico:Texture = preload("../assets/expand.svg")
@@ -11,7 +17,6 @@ var collapse_ico:Texture = preload("../assets/collapse.svg")
 var button_size:float = 20
 
 func _ready():
-	super._ready()
 	_update()
 
 func _button_setup():

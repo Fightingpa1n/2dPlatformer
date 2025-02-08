@@ -140,7 +140,29 @@ var movement_velocity = Vector2() ## the velocity for the player movement (like 
 var other_velocity = Vector2() #the velocity for other stuff from outside the player movement (like if a big frypan were to hit the player)
 
 # #========== Debug Signals ==========# #TODO: Add Debug Stuff
-# signal state_change(state_name:String)
+signal state_change(state_id:String) ## signal on state change
+signal debug_previous_state(state_id:String) ## signal on debug previous state
+
+signal debug_velocity(velocity:Vector2)
+signal debug_movement_velocity(movement_velocity:Vector2)
+signal debug_other_velocity(other_velocity:Vector2)
+signal debug_total_velocity(total_velocity:Vector2)
+
+signal debug_gravity(gravity:float)
+signal debug_max_fall_speed(max_fall_speed:float)
+signal debug_friction(friction:float)
+signal debug_max_move_speed(max_move_speed:float)
+signal debug_move_acceleration(move_acceleration:float)
+signal debug_move_deceleration(move_deceleration:float)
+signal debug_jump_force(jump_force:float)
+
+signal debug_jump_time(jump_time:float)
+signal debug_released_jump(released_jump:bool)
+signal debug_jump_counter(jump_counter:int)
+signal debug_coyote_timer(coyote_timer:float)
+signal debug_buffer_timer(buffer_timer:float)
+signal debug_buffer_jump(buffer_jump:bool)
+
 # signal velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
 # signal pre_process_velocity_update(velocity:Vector2, movement_velocity:Vector2, other_velocity:Vector2)
 
@@ -240,7 +262,7 @@ func _state_changer(new_state_id:String) -> void: ## the statemashine function r
 		print("Changing State to: "+next_state_id) ## print the state change
 		current_state = states[next_state_id] ## set the current state to the new state
 		current_state.enter() ## enter the new state
-		# emit_signal("state_change", next_state_id) ## emit the state change signal
+		emit_signal("state_change", next_state_id) ## emit the state change signal
 
 	_is_transitioning = false ## set the transitioning variable to false
 
@@ -255,11 +277,12 @@ func _physics_process(delta): #physics process
 	velocity -= movement_velocity
 	velocity -= other_velocity
 
-	# emit_signal("pre_process_velocity_update", velocity, movement_velocity, other_velocity) #emit current velocity
-
 	current_state.physics_process(delta)
 
-	# emit_signal("velocity_update", velocity, movement_velocity, other_velocity) #emit current velocity
+	emit_signal("debug_velocity", velocity)
+	emit_signal("debug_movement_velocity", movement_velocity)
+	emit_signal("debug_other_velocity", other_velocity)
+	emit_signal("debug_total_velocity", total_velocity())
 
 	#readd the different velocitie stuff.
 	velocity += movement_velocity
@@ -283,7 +306,23 @@ func _physics_process(delta): #physics process
 				other_velocity.x = 0
 
 #========== Normal Process ==========#
-func _process(delta): current_state.normal_process(delta) #normal process
+func _process(delta):
+	current_state.normal_process(delta) #normal process
+
+	emit_signal("debug_gravity", gravity)
+	emit_signal("debug_max_fall_speed", max_fall_speed)
+	emit_signal("debug_friction", friction)
+	emit_signal("debug_max_move_speed", max_move_speed)
+	emit_signal("debug_move_acceleration", move_acceleration)
+	emit_signal("debug_move_deceleration", move_deceleration)
+	emit_signal("debug_jump_force", jump_force)
+
+	emit_signal("debug_jump_time", jump_time)
+	emit_signal("debug_released_jump", released_jump)
+	emit_signal("debug_jump_counter", jump_counter)
+	emit_signal("debug_coyote_timer", coyote_timer)
+	emit_signal("debug_buffer_timer", buffer_timer)
+	emit_signal("debug_buffer_jump", buffer_jump)
 
 
 #============================== Input Stuff ==============================#

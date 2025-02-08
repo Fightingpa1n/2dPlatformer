@@ -56,14 +56,14 @@ var PRESETS = {
 		_editor_update()
 
 
-@onready var debug_root:DebugRoot = get_parent() #the root container of the debug window
-@onready var _window_container:DebugContainer = get_child(0) #the window container
+# @onready var debug_root:DebugRoot = get_parent() #the root container of the debug window
+# @onready var _window_container:DebugContainer = get_child(0) #the window container
 
 var values = {} #the values dictionary
 
 func _on_values_updated(): #called when the values are updated
 	print("Updting values")
-	values = _window_container.get_values() #get the values from the window container
+	# values = _window_container.get_values() #get the values from the window container
 
 
 func _editor_update(): #update self on changes in editor (used for display changes when stuff in the editor changes aka it's not running yet)
@@ -84,4 +84,4 @@ func _editor_update(): #update self on changes in editor (used for display chang
 	offset_top = 0.0
 	offset_bottom = 0.0
 
-	_window_container.get_values() #update the values   
+	# _window_container.get_values() #update the values   

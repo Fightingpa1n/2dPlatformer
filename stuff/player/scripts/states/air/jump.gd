@@ -15,6 +15,10 @@ func enter():
 	player.gravity = player.JUMP_GRAVITY #set the gravity to jump gravity
 	player.velocity.y = -player.JUMP_FORCE #apply the jump force #TODO: check for last state to differ jump forces
 
+func exit():
+	super() #call the air state exit function
+	player.jump_time = 0 #reset jump time
+
 func physics_process(delta):
 	ledge_forgivness()
 	if ceiling_hit(): return #check if the player is hitting the ceiling (if state change occured return)

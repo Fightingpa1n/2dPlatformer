@@ -50,7 +50,7 @@ func physics_process(delta):
 
 
 func coyote_jump() -> bool: ## try do do coyote jump and return true on state change
-    if player.coyote_timer > 0: #if the coyote timer is still active
+    if player.coyote_timer > 0 and player.jump_counter < player.JUMP_AMOUNT: #if the coyote timer is still active
         change_state(JumpState.id()) #change to jump state
         return true
     else: return false

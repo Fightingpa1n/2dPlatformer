@@ -2,54 +2,51 @@
 extends Label
 class_name DebugValue
 
-enum ValueType {STRING, INT, FLOAT, BOOL, VECTOR2, VECTOR3}
+enum targetNode{
+    PLAYER
+}
 
-@export var label:String = "Value": #the label of the value
-    set(value):
-        label = value
-        _editor_update()
+var value ## the value we want to display
 
-@export var type:ValueType = ValueType.STRING: #the type of the value
-    set(value):
-        type = value
-        _editor_update()
+@export var label:String = "Value": ## the label of the debug value
+    set(_value):
+        label = _value
+        _update_editor()
 
-@onready var debug_window = get_parent().debug_window
+@export var default_value = 0: ## the default value
+    set(_value):
+        value = _value
+        default_value = _value
+        _update_editor()
 
-var key:String = ""
-var value:Variant = null
+@export var target:targetNode = targetNode.PLAYER: ## the target node
+    set(_value):
+        target = _value
+        _update_editor()
 
-func _ready():
-    if not get_parent() is DebugContainer: #check if the parent is a debug container
-        printerr("DebugValue: Parent is not DebugContainer")
+@export var target_signal:String = "value_changed": ## the target signal
+    set(_value):
+        target_signal = _value
+        _update_editor()
+
+func _ready():    
+    var node
+    match target: #get target node
+        targetNode.PLAYER:
+            node = await NodeManager.get_player()
     
-    _editor_update()
+    if not node:
+        printerr("No target node found")
+        return
+    node.connect(target_signal, _on_value_change)
+    _update_editor()
+    
+func _update_editor(): ## update the editor
+    if not value: value = default_value #use default
+    text = label + ": " + str(value) #update display
 
-func _editor_update(): #update self on changes in editor (used for display changes when stuff in the editor changes aka it's not running yet)
-    key = label.replace(":", "").to_lower().replace(" ", "_")
-    name = key
+func _on_value_change(_value): ## the thing we want to connect the signal to
+    value = _value
+    _update_editor()
 
-    match type: #set default value
-        ValueType.STRING:
-            value = ""
-        ValueType.INT:
-            value = 0
-        ValueType.FLOAT:
-            value = 0.0
-        ValueType.BOOL:
-            value = false
-        ValueType.VECTOR2:
-            value = Vector2()
-        ValueType.VECTOR3:
-            value = Vector3()
-    _value_update()
-
-func _value_update(): #update text to display current value (used pretty much the whole time)
-    text = label + " " + str(value)
-
-func update_value(value): #update the value
-    self.value = value
-    _value_update()
-
-#the update value function can be overriden to add custom value handling
 
