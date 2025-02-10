@@ -18,6 +18,7 @@ func physics_process(delta):
 	# wall_check()
 
 	if ceiling_hit(): return #check if the player is hitting the ceiling (if state change occured return)
+	if wall_check(): return #check if the player is still on the wall (if state change occured return)
 
 	if player.total_velocity().y > 0:
 		change_state(FallState.id())

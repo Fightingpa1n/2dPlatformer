@@ -10,22 +10,15 @@ func enter():
     # player.max_fall_speed = 
 
 func physics_process(delta):
-    
-    if ground_check(): return #do the ground check (if state change occured return)
-    
+    super(delta) #call the fall state physics process
+
     if !InputManager.down.pressed: #if the player is not holding down
         change_state(FallState.id()) #change to fall state
         return
-    
-    apply_gravity(delta) #apply fast fall gravity
 
-    move(delta) #while falling we are allowed to move
-
-    # wall_check()
-
-    if player.total_velocity().y < 0:
-        change_state(AscendState.id())
-    
+func on_down_release(_time_pressed:float) -> void:
+    change_state(FallState.id()) #change to fall state
+    return
 
 
 

@@ -131,6 +131,12 @@ class_name PlayerController
 @export var COYOTE_TIME:float = 0.1 ## the time the player has after leaving the ground to still jump
 @export var BUFFER_TIME:float = 0.2 ## the time a jump get's buffered for, so if the player presses jump before landing it will still jump when landing
 @export var JUMP_AMOUNT:int = 2 ## the amount of jumps the player can perform (0 = jumping disabled | 1 = normal | 2+ = double jumping etc.)
+@export var WALLED_SLIDE_SPEED:float = 50.0 ## the speed the player slides down a wall when walled (holding up)
+@export var WALLED_FRICTION:float = 3600.0 ## the acceleration/deceleration applied to the player when sliding down a wall when walled (holding up)
+@export var WALL_SLIDE_SPEED:float = 100.0 ## the speed the player slides down a wall
+@export var WALL_FRICTION:float = 3600.0 ## the acceleration/deceleration applied to the player when sliding down a wall
+@export var FAST_WALL_SLIDE_SPEED:float = 150.0 ## the max speed a playyer slides down a wall while holding down
+@export var FAST_WALL_FRICTION:float = 3600.0 ## the acceleration/deceleration applied to the player when sliding down a wall while holding down
 
 #============================== Init ==============================#
 @onready var collision:PlayerCollision = %collision ## the collision object for the player (that handles collisions and raycasts and stuff)
@@ -185,6 +191,8 @@ var max_move_speed:float = WALK_SPEED ## the current maximum move speed of the p
 var move_acceleration:float = WALK_ACCELERATION ## the current move acceleration of the player
 var move_deceleration:float = WALK_DECELERATION ## the current move deceleration of the player
 var jump_force:float = JUMP_FORCE ## the current jump force of the player
+var wall_slide_speed:float = WALL_SLIDE_SPEED ## the current max wall slide speed of the player
+var wall_friction:float = WALL_FRICTION ## the current wall friction of the player
 
 #========== Movement Functions ==========# #TODO: find better name
 func apply_gravity(delta:float) -> void: ## apply gravity to the player by accelerating the fall speed until it reaches the given max fall speed, uses the global gravity value
@@ -209,8 +217,10 @@ func slow_down(delta:float) -> void: ## slow down the players movement velocity 
 		var _deceleration = move_deceleration * delta #set deceleration to deceleration times delta
 		movement_velocity.x = move_toward(movement_velocity.x, 0, _deceleration)
 
+func wall_slide(delta:float) -> void: ## do wall sliding bases on the global wall slide speed and wall friction values
+	velocity.y = move_toward(velocity.y, wall_slide_speed, wall_friction*delta)
 
-#============================== States ==============================#
+#============================== States ==============================# #TODO: I just got the idea to use just the classes instead of instances. because like that we can only instanciate a state while it's current and delete it as soon as exit ocours. as too negate the need for using return as change state will stop the states execution. (maybe)
 var states = {}  ## states Dictionary where all states are stored by their id
 var current_state:PlayerState = null ## the current state the player is in
 var previous_state:PlayerState = null ## the previous state the player was in
@@ -225,6 +235,9 @@ func _ready_states(): ## ready the states and set default state
 	_add_state(FastFallState)
 	_add_state(AscendState)
 	_add_state(JumpState)
+	_add_state(WalledState)
+	_add_state(WallSlideState)
+	_add_state(FastWallSlideState)
 
 	current_state = states[IdleState.id()] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 

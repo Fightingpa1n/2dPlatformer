@@ -20,17 +20,14 @@ func normal_process(delta):
             player.buffer_jump = false #reset the buffer jump
 
 
-# func wall_check(): #TODO: clean up
+func wall_check() -> bool: ## check if player is touching wall returns true if a state change has occured
+    if collision.is_touching_wall():
+        var wall_direction = collision.get_wall_direction()
 
-#     if player.collision.is_touching_wall():
-#         var wall_direction = player.collision.get_wall_direction()
-#         #if moving away from wall, return. or in other words if the player velocity is not towards the wall, return
-#         if sign(player.total_velocity().x) != wall_direction:
-#             return
-        
-#         #instead of using left and right let's use the movevent verctor :D
-#         if player.movement_velocity.x != 0 and player.movement_velocity.x != wall_direction:
-#             player.change_state("walled")
+        if sign(InputManager.horizontal.value) == wall_direction: #if we are moving towards the wall
+            change_state(WallSlideState.id()) #change to wall slide state
+            return true
+    return false
 
 func ground_check() -> bool: ## check if the player is still on the ground returns true if a state change has occured 
     if collision.is_touching_ground():

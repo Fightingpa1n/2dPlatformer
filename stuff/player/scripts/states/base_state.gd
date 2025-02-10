@@ -1,5 +1,5 @@
 extends Node
-class_name PlayerState 
+class_name PlayerState
 
 static func id() -> String: return "" ## returns the id of the state (please override this each state to return the id)
 ## the parent state for all player states! (contains all base methods and variables)
@@ -73,3 +73,4 @@ func apply_gravity(delta:float) -> void: player.apply_gravity(delta) ## wrapper 
 func apply_friction(delta:float) -> void: player.apply_friction(delta) ## wrapper for the player's apply friction method
 func move(delta:float) -> void: player.move(delta) ## wrapper for the player's move method
 func slow_down(delta:float) -> void: player.slow_down(delta) ## wrapper for the player's slow down method
+func wall_slide(delta:float) -> void: player.wall_slide(delta) ## wrapper for the player's wall slide method

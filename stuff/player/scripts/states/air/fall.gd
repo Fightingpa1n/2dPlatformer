@@ -13,9 +13,9 @@ func exit():
 
 func physics_process(delta):
     super(delta) #call the air state physics process (mostly for gravity reset)
-    #wall_check()
     
     if ground_check(): return #do the ground check (if state change occured return)
+    if wall_check(): return #do the wall check (if state change occured return)
 
     if player.total_velocity().y < 0: #if we are moving upwards, change to ascend state
         change_state(AscendState.id())
