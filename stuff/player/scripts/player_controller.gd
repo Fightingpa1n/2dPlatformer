@@ -74,34 +74,34 @@ class_name PlayerController
 @export var MAX_FALL_SPEED:float = 500.0 ## the maximum speed the player can fall at
 
 @export_group("Friction") ## Friction is the value used to slow down player velocity
-@export var GROUND_FRICTION:float = 3600.0 ## the deceleration applied to velocitys when the player is on the ground
-@export var AIR_FRICTION:float = 3600.0 ## the deceleration applied to velocitys when the player is in the air
+@export var GROUND_FRICTION:float = 2600.0 ## the deceleration applied to velocitys when the player is on the ground
+@export var AIR_FRICTION:float = 1000.0 ## the deceleration applied to velocitys when the player is in the air
 
 #==================== Movement ====================#
 @export_category("Movement") ## Movement related values
 @export_group("Move") ## Movment acceleration, deceleration and speed values for different states
 #========== Walk ==========#
-@export var WALK_SPEED:float = 300.0 ## the speed the player walks at (at a maximum)
-@export var WALK_ACCELERATION:float = 3600.0 ## the movment acceleration on the ground
-@export var WALK_DECELERATION:float = 3600.0 ## the movment deceleration on the ground
+@export var WALK_SPEED:float = 100.0 ## the speed the player walks at (at a maximum)
+@export var WALK_ACCELERATION:float = 2600.0 ## the movment acceleration on the ground
+@export var WALK_DECELERATION:float = 2600.0 ## the movment deceleration on the ground
 #========== Run ==========#
-@export var RUN_SPEED:float = 600.0 ## the speed the player runs at (at a maximum)
-@export var RUN_ACCELERATION:float = 3600.0 ## the movment acceleration when running
-@export var RUN_DECELERATION:float = 3600.0 ## the movment deceleration when running
+@export var RUN_SPEED:float = 200.0 ## the speed the player runs at (at a maximum)
+@export var RUN_ACCELERATION:float = 2600.0 ## the movment acceleration when running
+@export var RUN_DECELERATION:float = 2600.0 ## the movment deceleration when running
 #========== Crouch ==========#
-@export var CROUCH_SPEED:float = 150.0 ## the speed the player crouches at (at a maximum)
+@export var CROUCH_SPEED:float = 50.0 ## the speed the player crouches at (at a maximum)
 @export var CROUCH_ACCELERATION:float = 3600.0 ## the movment acceleration when crouching
 @export var CROUCH_DECELERATION:float = 3600.0 ## the movment deceleration when crouching
 #========== Air ==========#
-@export var AIR_SPEED:float = 300.0 ## the speed the player moves in the air (at a maximum)
-@export var AIR_ACCELERATION:float = 3600.0 ## the movment acceleration in the air
-@export var AIR_DECELERATION:float = 3600.0 ## the movment deceleration in the air
+@export var AIR_SPEED:float = 100.0 ## the speed the player moves in the air (at a maximum)
+@export var AIR_ACCELERATION:float = 1000.0 ## the movment acceleration in the air
+@export var AIR_DECELERATION:float = 500.0 ## the movment deceleration in the air
 
 #========== Jump ==========#
 @export_group("Jump") ## Jump related values
-@export var JUMP_FORCE:float = 400.0 ## Initial jump force applied to the player
+@export var JUMP_FORCE:float = 200.0 ## Initial jump force applied to the player
 @export var JUMP_GRAVITY:float = 0.0 ## Gravity at the start of the jump
-@export var JUMP_TIME:float = 0.5 ## Time for gravity to reach its normal value
+@export var JUMP_TIME:float = 0.8 ## Time for gravity to reach its normal value
 @export var RELEASE_GRAVITY:float = 1800.0 ## Gravity applied if the player releases jump early (to make it more snappy)
 
 #========== Slide ==========#
@@ -127,7 +127,7 @@ class_name PlayerController
 @export var JUMP_BUFFER_RAYCAST_VELOCITY_MULTIPLIER:float = 100.0 ## bassically how much the velocity influences the length of the raycast
 
 #==================== Unsorted ====================# #TODO: Sort this stuff later
-@export_group("Unsorted") ## Unsorted values for quick adding to implement them before worrying about sorting them into the correct category later
+@export_category("Unsorted") ## Unsorted values for quick adding to implement them before worrying about sorting them into the correct category later
 @export var COYOTE_TIME:float = 0.1 ## the time the player has after leaving the ground to still jump
 @export var BUFFER_TIME:float = 0.2 ## the time a jump get's buffered for, so if the player presses jump before landing it will still jump when landing
 @export var JUMP_AMOUNT:int = 2 ## the amount of jumps the player can perform (0 = jumping disabled | 1 = normal | 2+ = double jumping etc.)
@@ -137,7 +137,9 @@ class_name PlayerController
 @export var WALL_FRICTION:float = 3600.0 ## the acceleration/deceleration applied to the player when sliding down a wall
 @export var FAST_WALL_SLIDE_SPEED:float = 150.0 ## the max speed a playyer slides down a wall while holding down
 @export var FAST_WALL_FRICTION:float = 3600.0 ## the acceleration/deceleration applied to the player when sliding down a wall while holding down
-
+@export var WALL_JUMP:bool = true ## if the player can wall jump
+@export var WALL_JUMP_FORCE:float = 400.0 ## the force applied to the player when wall jumping
+@export var WALL_FLOP_FORCE:float = 200.0 ## the force applied to the player when wall flopping (a wall jump that just pushes of the wall without gainign height)
 #============================== Init ==============================#
 @onready var collision:PlayerCollision = %collision ## the collision object for the player (that handles collisions and raycasts and stuff)
 
