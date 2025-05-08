@@ -22,8 +22,6 @@ func exit():
 func physics_process(delta):
 	ledge_forgivness()
 	if ceiling_hit(): return #check if the player is hitting the ceiling (if state change occured return)
-	if wall_check(): return #check if the player is still on the wall (if state change occured return)
-	# wall_check() #TODO: wall states are currently disabled
 	
 	move(delta)
 

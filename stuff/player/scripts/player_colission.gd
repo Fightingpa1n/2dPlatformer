@@ -20,6 +20,9 @@ var ray_side_left_top: RayCast2D
 var ray_side_left_center: RayCast2D
 var ray_side_left_bottom: RayCast2D
 
+var ray_side_left_proximity: RayCast2D
+var ray_side_right_proximity: RayCast2D
+
 var ray_feet_left: RayCast2D
 var ray_feet_center: RayCast2D
 var ray_feet_right: RayCast2D
@@ -43,6 +46,10 @@ func _ready():
 	ray_side_left_top = _create_ray("side_left_top", Vector2(-shape_size.x/2, -shape_size.y/2), Vector2(-player.WALL_RAYCAST_LENGTH, 0))
 	ray_side_left_center = _create_ray("side_left_center", Vector2(-shape_size.x/2, 0), Vector2(-player.WALL_RAYCAST_LENGTH, 0))
 	ray_side_left_bottom = _create_ray("side_left_bottom", Vector2(-shape_size.x/2, shape_size.y/2), Vector2(-player.WALL_RAYCAST_LENGTH, 0))
+
+	#proximitys
+	ray_side_left_proximity = _create_ray("side_left_proximity", Vector2(-shape_size.x/2, 0), Vector2(-player.WALL_PROXIMITY_RAYCAST_LENGTH, 0))
+	ray_side_right_proximity = _create_ray("side_right_proximity", Vector2(shape_size.x/2, 0), Vector2(player.WALL_PROXIMITY_RAYCAST_LENGTH, 0))
 
 	#feet
 	ray_feet_left = _create_ray("feet_left", Vector2(-shape_size.x/2, shape_size.y/2), Vector2(0, player.FLOOR_RAYCAST_LENGTH))
@@ -112,20 +119,6 @@ func is_touching_ground() -> bool: #this function checks if the player is touchi
 func is_touching_ceiling() -> bool: #checks if the player is touching the ceiling
 	return (ray_head_left.is_colliding() or ray_head_right.is_colliding()) and ray_head_center.is_colliding()
 
-func is_touching_right_wall() -> bool: #checks if the player is touching a wall with the right side
-	return ray_side_right_top.is_colliding() or ray_side_right_center.is_colliding() or ray_side_right_bottom.is_colliding()
-
-func is_touching_left_wall() -> bool: #checks if the player is touching a wall with the left side
-	return ray_side_left_top.is_colliding() or ray_side_left_center.is_colliding() or ray_side_left_bottom.is_colliding()
-
-func is_touching_wall() -> bool: #checks if the player is touching a wall
-	return is_touching_right_wall() or is_touching_left_wall()
-
-
-
-
-
-
 func return_ceiling_ledge_forgiveness_thingy_idk(): #this function is used for ledge forgivness it will check if ledgeforgivness is applicable and if yes it will return the relevant ray so the actual code can handle the ledgeforgivness
 	if ray_head_left.is_colliding() and not ray_head_center.is_colliding():
 		print("ledge_forgivness")
@@ -136,19 +129,27 @@ func return_ceiling_ledge_forgiveness_thingy_idk(): #this function is used for l
 	else:
 		return null
 
-#Wall stuff
 
-func get_wall_direction() -> int: #this is pretty bad espeshally since it's hardcoded #TODO: make this better
-	var right_side = ray_side_right_top.is_colliding() or ray_side_right_center.is_colliding() or ray_side_right_bottom.is_colliding()
-	var left_side = ray_side_left_top.is_colliding() or ray_side_left_center.is_colliding() or ray_side_left_bottom.is_colliding()
-	if right_side and left_side:
-		return 0
-	elif right_side:
-		return 1
-	elif left_side:
-		return -1
-	else:
-		return 0
+#===== wall stuff =====# #TODO: figure out which of the two check methods feels better
+func is_touching_right_wall() -> bool: #checks if the player is touching a wall with the right side (I can't decide which check is better, for now I'll use the check for any of the rays)
+	# return (ray_side_right_center.is_colliding() and ray_side_right_top.is_colliding()) or (ray_side_right_center.is_colliding() and ray_side_right_bottom.is_colliding()) #if the center ray along with either the top or bottom ray are colliding 
+	return ray_side_right_top.is_colliding() or ray_side_right_center.is_colliding() or ray_side_right_bottom.is_colliding() #if any of the right side rays are colliding
+
+func is_touching_left_wall() -> bool: #checks if the player is touching a wall with the left side (I can't decide which check is better, for now I'll use the check for any of the rays)
+	# return (ray_side_left_center.is_colliding() and ray_side_left_top.is_colliding()) or (ray_side_left_center.is_colliding() and ray_side_left_bottom.is_colliding()) #if the center ray along with either the top or bottom ray are colliding
+	return ray_side_left_top.is_colliding() or ray_side_left_center.is_colliding() or ray_side_left_bottom.is_colliding() #if any of the left side rays are colliding
+
+func get_wall_direction() -> int: #gets the wall direction (aka which side the wall is on we are touching) 1=right, -1=left, 0=none/both
+	var direction = 0
+	if is_touching_right_wall(): direction += 1 #right wall
+	if is_touching_left_wall(): direction -= 1 #left wall
+	return direction
+
+func get_wall_proximity_direction() -> int: #gets the wall direction if in proximity
+	var direction = 0
+	if ray_side_left_proximity.is_colliding(): direction -= 1 #left wall
+	if ray_side_right_proximity.is_colliding(): direction += 1 #right wall
+	return direction
 
 
 #============================== Jump Buffer ==============================#

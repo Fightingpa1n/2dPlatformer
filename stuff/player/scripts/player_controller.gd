@@ -118,7 +118,8 @@ class_name PlayerController
 @export_group("Raycast") ## Raycast related values
 @export_flags_2d_physics var RAYCAST_COLLISION_MASK:int = 2 ## the collision mask for the collision checks
 @export var CEILING_RAYCAST_LENGTH:float = 2.5 ## the length of the raycast for the ceiling check
-@export var WALL_RAYCAST_LENGTH:float = 2.5 ## the length of the raycast for the wall check
+@export var WALL_RAYCAST_LENGTH:float = 1.0 ## the length of the raycast for the wall check
+@export var WALL_PROXIMITY_RAYCAST_LENGTH:float = 8.0 ## the length of the raycast for the wall proximity check (to see if we are close to a wall)
 @export var FLOOR_RAYCAST_LENGTH:float = 2.5 ## the length of the raycast for the floor check
 
 #========== Jump Buffer Raycast ==========#
@@ -196,6 +197,8 @@ var jump_force:float = JUMP_FORCE ## the current jump force of the player
 var wall_slide_speed:float = WALL_SLIDE_SPEED ## the current max wall slide speed of the player
 var wall_friction:float = WALL_FRICTION ## the current wall friction of the player
 
+var current_wall_direction:int = 0 ## the current wall direction of the player
+
 #========== Movement Functions ==========# #TODO: find better name
 func apply_gravity(delta:float) -> void: ## apply gravity to the player by accelerating the fall speed until it reaches the given max fall speed, uses the global gravity value
 	velocity.y = move_toward(velocity.y, max_fall_speed, gravity*delta)
@@ -225,22 +228,25 @@ func wall_slide(delta:float) -> void: ## do wall sliding bases on the global wal
 #============================== States ==============================# #TODO: I just got the idea to use just the classes instead of instances. because like that we can only instanciate a state while it's current and delete it as soon as exit ocours. as too negate the need for using return as change state will stop the states execution. (maybe)
 var states = {}  ## states Dictionary where all states are stored by their id
 var current_state:PlayerState = null ## the current state the player is in
-var previous_state:PlayerState = null ## the previous state the player was in
+var previous_state:PlayerState = null ## the previous state the player was in #TODO: the previous state currently doesn't show correctly in the debug ui. it only says 0 for some reason
 
-func _ready_states(): ## ready the states and set default state
+func _ready_states(): ## ready the states and set default state #TODO: instead of registering states like this, I should add a states node to the player, and add each state as a child of that node. and then modify the baseState so on init it adds itself to the player. this way it would utilize the node system yay
 	_add_state(IdleState)
 	_add_state(WalkState)
 	_add_state(RunState)
 	_add_state(CrouchState)
 	_add_state(SlideState)
 	_add_state(FallState)
-	_add_state(FastFallState)
+	_add_state(FastFallState) #TODO: this doesn't seem to work currently
 	_add_state(AscendState)
 	_add_state(JumpState)
+	# _add_state(RunJumpState) #TODO
+	_add_state(WallEnterState)
 	_add_state(WalledState)
 	_add_state(WallSlideState)
 	_add_state(FastWallSlideState)
-
+	# _add_state(WallRunState) #TODO
+	
 	current_state = states[IdleState.id()] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 
 #========== Shared State Variables ==========# (used by the differnet individual states) #Note: maybe I should change the way this works to dynamically do that so they get added to like a list or something and only get used while active or something like that
@@ -305,7 +311,7 @@ func _physics_process(delta): #physics process
 	
 	var did_collide = move_and_slide() #apply velocity and stuff and then check for physics collisions
 
-	if did_collide: #reset velocitys if we collide with stuff
+	if did_collide: #reset velocitys if we collide with stuff (the hitbox, not just the raycasts)
 		for i in range(get_slide_collision_count()):
 			var slide_collision = get_slide_collision(i)
 			var normal = slide_collision.get_normal()

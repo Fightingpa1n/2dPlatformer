@@ -15,10 +15,8 @@ func exit():
 
 func physics_process(delta):
 	super(delta) #call the air state physics process (mostly for gravity reset)
-	# wall_check()
-
+	
 	if ceiling_hit(): return #check if the player is hitting the ceiling (if state change occured return)
-	if wall_check(): return #check if the player is still on the wall (if state change occured return)
 
 	if player.total_velocity().y > 0:
 		change_state(FallState.id())
@@ -41,7 +39,7 @@ func ceiling_hit() -> bool: ## check if the player is hitting the ceiling
 		return true
 	else: return false
 
-
+func on_horizontal_direction(_direction: float) -> void: pass #override the on_horizontal_direction as we don't want to wall in this state #TODO: add wall run
 
 func ledge_forgivness(): ##do ledge forgivness when accending
 	var ray = collision.return_ceiling_ledge_forgiveness_thingy_idk()
