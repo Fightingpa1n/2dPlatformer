@@ -185,6 +185,9 @@ func _ready(): #Ready the player
 	other_velocity = Vector2() #set the other velocity to 0
 
 
+#! I really fucked myself in the foot with this one, the whole velocity thing seemed nice at first but it's just such a mess...
+#maybe I'll have to go to the drawing board to figure out exactly what I want and how to do it...
+
 #============================== Physics/Movement/Idk ==============================# #TODO: find better name
 #========== "Global"/Current Movement Vars ==========# #TODO: find better name
 var gravity:float = GRAVITY ## the current gravity applied to the player

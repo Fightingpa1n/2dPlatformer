@@ -31,8 +31,18 @@ func physics_process(delta):
     apply_friction(delta) #apply friction to the player (ground defaults)
 
 func on_jump_press(): #on jump override from grounded state
-    change_state(JumpState.id()) #change to jump state
-    return
+    if player.jump_counter < player.JUMP_AMOUNT: #if we have jumps left
+        print("entered jump from run") #debug
+
+        player.velocity.x = player.movement_velocity.x
+        player.movement_velocity.x = 0 #set the movement velocity to 0 so we don't move while jumping
+
+        #i probably should think about how I should handle run jumps, but I wanna try something real quick.
+        # print(player.movement_velocity.x) #debug
+        # player.velocity.x = float(player.movement_velocity.x) #set the x velocity to the current velocity
+        # print(player.velocity.x) #debug
+        change_state(JumpState.id())
+        return
 
 func on_crouch_press() -> void: #on crouch input
     print("entered crouch from run") #debug

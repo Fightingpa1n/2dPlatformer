@@ -25,7 +25,7 @@ func ground_check() -> bool: ## check if the player is still on the ground retur
 		return false
 	else: return true
 
-func on_jump_press(): #the jump init can be handled here since pretty much all grounded states won't need to alter it
+func on_jump_press(): #the jump init can be handled here since pretty much all grounded states won't need to alter it (except for the ones that do)
 	if player.jump_counter < player.JUMP_AMOUNT: #if we have jumps left
 		change_state(JumpState.id())
 		return
