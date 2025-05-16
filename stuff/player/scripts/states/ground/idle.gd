@@ -11,10 +11,10 @@ func physics_process(_delta):
 		change_state(WalkState.id()) #change to walk state
 		return
 	
-	if abs(player.total_velocity().x) >= player.RUN_SPEED: #if we are moving at run speed or faster
-		change_state(RunState.id()) #change to run state
+	if abs(player.velocity.x) >= player.RUN_SPEED: #if we are moving at run speed or faster
+		# change_state(RunState.id()) #change to run state
 		return
-	elif abs(player.total_velocity().x) > 0: #otherwise if we have any velocity on the x axis§
+	elif abs(player.velocity.x) > 0: #otherwise if we have any velocity on the x axis§
 		change_state(WalkState.id()) #change to walk state
 		return
 	
@@ -24,5 +24,5 @@ func on_horizontal_direction(direction:float) -> void: #on horizontal input
 		change_state(WalkState.id()) #change to walk state
 		return
 
-func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
-func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap
+# func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
+# func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap

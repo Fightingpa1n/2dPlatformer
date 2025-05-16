@@ -1,18 +1,20 @@
 extends Node
 class_name PlayerState
 
-static func id() -> String: return "" ## returns the id of the state (please override this each state to return the id)
-## the parent state for all player states! (contains all base methods and variables)
+##the parent state for all player states! (contains all base methods and variables)
+
+static func id() -> String: return "" ##returns the id of the state (please override this each state to return the id)
 
 #================ INIT ================#
 var player:PlayerController ##Player reference for stuff like velocitys and state changes
 var collision:PlayerCollision ##collision reference for raycasts and collision checks
+var states:PlayerStateMashine ##the state mashine reference for state changes
 
-## used to set player and collision reference (Please don't touch this function)
-func _ready() -> void: ## the Init function get's called on states definition in the player controller and is just used to set the player and collision reference please don't touch it :)	
-	if not player or not collision: ## if player or collision are not set
-		print("Player State not Initialized correctly! player or collision not set!") ## print error message
-		queue_free() ## destroy the state
+func _enter_tree() -> void: #on enter tree
+	if id() != "": name = id() #set the name to the id
+	else: #if the state has no id
+		printerr("State has no id defined or is parent state!") #print error message
+		queue_free() #remove the state
 
 #================ STATE METHODS ================#
 ## called when the state is entered (for reseting values and activating raycasts and stuff like that)
@@ -64,13 +66,11 @@ func on_crouch_doubletap() -> void: pass ## called when crouch button is double 
 #================ HELPER METHODS ================#
 ## changes the player state to the state with the given name (defined in the player controller)
 func change_state(new_state_id:String) -> void:
-	player.change_state(new_state_id)
+	states.change_state(new_state_id) #call the state mashine to change the state
 
 #========= Checks =========#
 
 #========= Physics =========#
 func apply_gravity(delta:float) -> void: player.apply_gravity(delta) ## wrapper for the player's apply gravity method
-func apply_friction(delta:float) -> void: player.apply_friction(delta) ## wrapper for the player's apply friction method
 func move(delta:float) -> void: player.move(delta) ## wrapper for the player's move method
-func slow_down(delta:float) -> void: player.slow_down(delta) ## wrapper for the player's slow down method
 func wall_slide(delta:float) -> void: player.wall_slide(delta) ## wrapper for the player's wall slide method

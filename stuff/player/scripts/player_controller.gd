@@ -141,12 +141,11 @@ class_name PlayerController
 @export var WALL_JUMP:bool = true ## if the player can wall jump
 @export var WALL_JUMP_FORCE:float = 400.0 ## the force applied to the player when wall jumping
 @export var WALL_FLOP_FORCE:float = 200.0 ## the force applied to the player when wall flopping (a wall jump that just pushes of the wall without gainign height)
-#============================== Init ==============================#
-@onready var collision:PlayerCollision = %collision ## the collision object for the player (that handles collisions and raycasts and stuff)
 
-#========== Velocities ==========#
-var movement_velocity = Vector2() ## the velocity for the player movement (like walking, running, sliding, etc.)
-var other_velocity = Vector2() #the velocity for other stuff from outside the player movement (like if a big frypan were to hit the player)
+
+#============================== Init ==============================#
+@onready var collision:PlayerCollision = %collision ##the collision object for the player (that handles collisions and raycasts and stuff)
+@onready var states:PlayerStateMashine = %states ##the state mashine object for the player (that handles the states and stuff)
 
 # #========== Debug Signals ==========# #TODO: Add Debug Stuff
 signal state_change(state_id:String) ## signal on state change
@@ -177,12 +176,9 @@ signal debug_buffer_jump(buffer_jump:bool)
 
 #========== Ready ==========#
 func _ready(): #Ready the player
-	_ready_states() #ready the states
-	_connect_input() #connect the input signals
-
 	velocity = Vector2() #set the velocity to 0
-	movement_velocity = Vector2() #set the movement velocity to 0
-	other_velocity = Vector2() #set the other velocity to 0
+	# movement_velocity = Vector2() #set the movement velocity to 0
+	# other_velocity = Vector2() #set the other velocity to 0
 
 
 #! I really fucked myself in the foot with this one, the whole velocity thing seemed nice at first but it's just such a mess...
@@ -200,19 +196,15 @@ var jump_force:float = JUMP_FORCE ## the current jump force of the player
 var wall_slide_speed:float = WALL_SLIDE_SPEED ## the current max wall slide speed of the player
 var wall_friction:float = WALL_FRICTION ## the current wall friction of the player
 
+var slower_multiplier:float = 0.5 #TODO: sort & rename
+var faster_multiplier:float = 2.0 #TODO: sort & rename
+
 var current_wall_direction:int = 0 ## the current wall direction of the player
+
 
 #========== Movement Functions ==========# #TODO: find better name
 func apply_gravity(delta:float) -> void: ## apply gravity to the player by accelerating the fall speed until it reaches the given max fall speed, uses the global gravity value
 	velocity.y = move_toward(velocity.y, max_fall_speed, gravity*delta)
-
-func apply_friction(delta:float) -> void: ## apply friction to the player by slowing down velocity and other velocity until it reaches 0, uses the global friction value
-	if abs(velocity.x) > 0: velocity.x = move_toward(velocity.x, 0, friction * delta)
-	if abs(other_velocity.x) > 0: other_velocity.x = move_toward(other_velocity.x, 0, friction * delta)
-
-
-var slower_multiplier:float = 0.5
-var faster_multiplier:float = 2.0
 
 func move(delta:float) -> void: ## move function for the player, modifies the movement velocity based on input and uses the global values to determine max speed, acceleration and deceleration
 	var horizontal_input = InputManager.horizontal.value #get input
@@ -230,37 +222,8 @@ func move(delta:float) -> void: ## move function for the player, modifies the mo
 		else: #if there is no input
 			velocity.x = move_toward(velocity.x, 0, move_deceleration * delta) #slow down to max speed slower than normal
 
-func slow_down(delta:float) -> void: ## slow down the players movement velocity down to 0 by the global deceleration value (just the stop part of the move function)
-	if abs(movement_velocity.x) > 0: #if there is no input (and we are still moving)
-		var _deceleration = move_deceleration * delta #set deceleration to deceleration times delta
-		movement_velocity.x = move_toward(movement_velocity.x, 0, _deceleration)
-
 func wall_slide(delta:float) -> void: ## do wall sliding bases on the global wall slide speed and wall friction values
 	velocity.y = move_toward(velocity.y, wall_slide_speed, wall_friction*delta)
-
-#============================== States ==============================# #TODO: I just got the idea to use just the classes instead of instances. because like that we can only instanciate a state while it's current and delete it as soon as exit ocours. as too negate the need for using return as change state will stop the states execution. (maybe)
-var states = {}  ## states Dictionary where all states are stored by their id
-var current_state:PlayerState = null ## the current state the player is in
-var previous_state:PlayerState = null ## the previous state the player was in #TODO: the previous state currently doesn't show correctly in the debug ui. it only says 0 for some reason
-
-func _ready_states(): ## ready the states and set default state #TODO: instead of registering states like this, I should add a states node to the player, and add each state as a child of that node. and then modify the baseState so on init it adds itself to the player. this way it would utilize the node system yay
-	_add_state(IdleState)
-	_add_state(WalkState)
-	# _add_state(RunState)
-	# _add_state(CrouchState)
-	# _add_state(SlideState)
-	# _add_state(FallState)
-	# _add_state(FastFallState) #TODO: this doesn't seem to work currently
-	# _add_state(AscendState)
-	# _add_state(JumpState)
-	# _add_state(RunJumpState) #TODO
-	# _add_state(WallEnterState)
-	# _add_state(WalledState)
-	# _add_state(WallSlideState)
-	# _add_state(FastWallSlideState)
-	# _add_state(WallRunState) #TODO
-	
-	current_state = states[IdleState.id()] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
 
 #========== Shared State Variables ==========# (used by the differnet individual states) #Note: maybe I should change the way this works to dynamically do that so they get added to like a list or something and only get used while active or something like that
 var jump_time = 0.0 ## the time the player has been jumping
@@ -270,62 +233,29 @@ var coyote_timer = 0.0 ## the timer used for the coyote time
 var buffer_timer = 0.0 ## the timer used for the jump buffer
 var buffer_jump = false ## if the jump was buffered
 
-#========== State Machine ==========#
-var _state_queue = [] ## the queue of states to change to
-var _is_transitioning = false ## if the state machine is currently transitioning between states
-
-func _state_changer(new_state_id:String) -> void: ## the statemashine function responsible for the actual state change
-	if new_state_id not in states: ## check if the state exists
-		printerr("Error: State not found: " + new_state_id)
-		return
-
-	_state_queue.append(new_state_id) ## add the state to the queue
-
-	## Prevent re-entry into the function if it's already processing the queue
-	if _is_transitioning:
-		return
-
-	_is_transitioning = true ## set the transitioning variable to true
-	while _state_queue.size() > 0: ## loop through the queue
-		var next_state_id = _state_queue.pop_front() ## Retrieve and remove the first element from the queue
-
-		if current_state != null: ## if there is a current state
-			current_state.exit() ## exit the current state
-			previous_state = current_state ## set the previous state to the current state
-
-		print("Changing State to: "+next_state_id) ## print the state change
-		current_state = states[next_state_id] ## set the current state to the new state
-		current_state.enter() ## enter the new state
-		emit_signal("state_change", next_state_id) ## emit the state change signal
-
-	_is_transitioning = false ## set the transitioning variable to false
-
-#========== State Changer ==========#
-func change_state(new_state_id:String) -> void: ## the function to change the state. NOTE: currently this is just a wrapper but it's ready for more complex stuff
-	_state_changer(new_state_id) #call the state changer function
 
 #========== Physics Process ==========#
-var _velocity_holder:Vector2 = Vector2()
+# var _velocity_holder:Vector2 = Vector2()
 func _physics_process(delta): #physics process
-
+	
 	#subtract the different velocitys from the main velocity
 	# velocity -= movement_velocity
 	# velocity -= other_velocity
 
-	current_state.physics_process(delta)
+	states.current_state.physics_process(delta)
 
 	emit_signal("debug_velocity", velocity)
-	emit_signal("debug_movement_velocity", movement_velocity)
-	emit_signal("debug_other_velocity", other_velocity)
-	emit_signal("debug_total_velocity", total_velocity())
+	# emit_signal("debug_movement_velocity", movement_velocity)
+	# emit_signal("debug_other_velocity", other_velocity)
+	# emit_signal("debug_total_velocity", total_velocity())
 
 	#readd the different velocitie stuff.
 	# velocity += movement_velocity
 	# velocity += other_velocity
 	
-	_velocity_holder = Vector2(velocity.x, velocity.y) #save the velocity
+	var _velocity_holder = Vector2(velocity.x, velocity.y) #save the velocity
 	var did_collide = move_and_slide() #apply velocity and stuff and then check for physics collisions
-	velocity = _velocity_holder #reset the velocity to the one we just calculated
+	velocity = Vector2(_velocity_holder.x, _velocity_holder.y) #readd the velocity
 	
 	if did_collide: #reset velocitys if we collide with stuff (the hitbox, not just the raycasts)
 		for i in range(get_slide_collision_count()):
@@ -344,7 +274,7 @@ func _physics_process(delta): #physics process
 
 #========== Normal Process ==========#
 func _process(delta):
-	current_state.normal_process(delta) #normal process
+	states.current_state.normal_process(delta) #normal process
 
 	emit_signal("debug_gravity", gravity)
 	emit_signal("debug_max_fall_speed", max_fall_speed)
@@ -362,77 +292,14 @@ func _process(delta):
 	emit_signal("debug_buffer_jump", buffer_jump)
 
 
-#============================== Input Stuff ==============================#
-func _connect_input(): ## connect the Action Key signals to the Input "Translators"
-	InputManager.left.connect_input(_on_left_press, _on_left_release, _on_left_dt)
-	InputManager.right.connect_input(_on_right_press, _on_right_release, _on_right_dt)
-	InputManager.horizontal.connect_input(_on_horizontal_direction)
-
-	InputManager.up.connect_input(_on_up_press, _on_up_release, _on_up_dt)
-	InputManager.down.connect_input(_on_down_press, _on_down_release, _on_down_dt)
-	InputManager.vertical.connect_input(_on_vertical_direction)
-
-	InputManager.jump.connect_input(_on_jump_press, _on_jump_release, _on_jump_dt)
-	InputManager.crouch.connect_input(_on_crouch_press, _on_crouch_release, _on_crouch_dt)
-
-#========== Input "Translators" ==========#
-func _on_left_press(): current_state.on_left_press() #left|on press
-func _on_left_release(time_pressed: float): current_state.on_left_release(time_pressed) #left|on release
-func _on_left_dt(): current_state.on_left_doubletap() #left|double tap
-
-func _on_right_press(): current_state.on_right_press() #right|on press
-func _on_right_release(time_pressed: float): current_state.on_right_release(time_pressed) #right|on release
-func _on_right_dt(): current_state.on_right_doubletap() #right|double tap
-
-func _on_horizontal_direction(direction:float): current_state.on_horizontal_direction(direction) #horizontal|direction
-
-func _on_up_press(): current_state.on_up_press() #up|on press
-func _on_up_release(time_pressed: float): current_state.on_up_release(time_pressed) #up|on release
-func _on_up_dt(): current_state.on_up_doubletap() #up|double tap
-
-func _on_down_press(): current_state.on_down_press() #down|on press
-func _on_down_release(time_pressed: float): current_state.on_down_release(time_pressed) #down|on release
-func _on_down_dt(): current_state.on_down_doubletap() #down|double tap
-
-func _on_vertical_direction(direction:float): current_state.on_vertical_direction(direction) #vertical|direction
-
-func _on_jump_press(): current_state.on_jump_press() #jump|on press
-func _on_jump_release(time_pressed: float): current_state.on_jump_release(time_pressed) #jump|on release
-func _on_jump_dt(): current_state.on_jump_doubletap() #jump|double tap
-
-func _on_crouch_press(): current_state.on_crouch_press() #crouch|on press
-func _on_crouch_release(time_pressed: float): current_state.on_crouch_release(time_pressed) #crouch|on release
-func _on_crouch_dt(): current_state.on_crouch_doubletap() #crouch|double tap
-
-
 #============================== Helper Stuff ==============================#
-func total_velocity() -> Vector2: return velocity + movement_velocity + other_velocity ## Returns the total of all velocitys combined, to see how fast the player is going in total 
+#========== States ==========#
+func change_state(new_state_id:String) -> void: ## the function to change the state. NOTE: currently this is just a wrapper but it's ready for more complex stuff
+	states.change_state(new_state_id) #call the state changer function
 
-func get_current_state() -> String: return current_state.id() ## returns the id of the current state
-func get_previous_state() -> String: return previous_state.id() ## returns the id of the previous state
+func get_current_state() -> String: return states.current_state.class.id() ## returns the id of the current state
+func get_previous_state() -> String: return states.previous_state.class.id() ## returns the id of the previous state
 
 #TODO: make a change state function where you can define a parent state like grounded or air
 #      and it will then automatically change to the correct state that extends said parent state
 #NOTE: I don't think this is needed if the States are good enough setup that they correctly switch between one another
-
-
-#============================== Private Helpers ==============================#
-#========== States Adder ==========#
-func _add_state(state_class:GDScript): ## add a state to the state machine #TODO: this was made before the change to method id's, so I need to change this up a bit with getting parrent states and all
-	var state_instance = state_class.new() #instantiate the state
-
-	if state_instance is not PlayerState: #check if the state is a PlayerState
-		printerr("Trying to add a state that is not a PlayerState: " + state_instance)
-		return
-
-	# if not state_instance.id(): #check if the state has an id
-	# 	printerr("State has no id, make sure it has a static id variable: " + state_instance)
-	# 	return
-	
-	if state_instance.id() in states: #check if the state is already in the state machine
-		printerr("State with this id already exists: " + state_instance.id())
-		return
-	
-	state_instance.player = self #set the player reference
-	state_instance.collision = collision #set the collision reference
-	states[state_instance.id()] = state_instance

@@ -20,7 +20,7 @@ layer_0/tile_data = PackedInt32Array(84, 262146, 4, 83, 262146, 2, 82, 262146, 2
 
 [node name="Player" parent="." instance=ExtResource("2_m225d")]
 unique_name_in_owner = true
-position = Vector2(-4, -45)
+position = Vector2(-36, 25)
 
 [node name="MainCamera" type="Camera2D" parent="Player"]
 unique_name_in_owner = true

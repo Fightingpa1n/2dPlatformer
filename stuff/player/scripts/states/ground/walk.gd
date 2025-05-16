@@ -14,11 +14,8 @@ func physics_process(delta):
         if player.velocity.x == 0: #once we stoped after no input
             change_state(IdleState.id()) #change to idle state
             return
-
     
-
-    
-    apply_friction(delta) #apply friction to the player (ground defaults)
+    # apply_friction(delta) #apply friction to the player (ground defaults)
 
 # func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
 # func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap

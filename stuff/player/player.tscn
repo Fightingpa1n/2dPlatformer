@@ -1,8 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bwxbyv5so6cwd"]
+[gd_scene load_steps=8 format=3 uid="uid://bwxbyv5so6cwd"]
 
 [ext_resource type="Script" path="res://stuff/player/scripts/player_controller.gd" id="1_kcbae"]
 [ext_resource type="Texture2D" uid="uid://cnqwsd1haq3ig" path="res://stuff/player/fighter.png" id="2_r82kv"]
 [ext_resource type="Script" path="res://stuff/player/scripts/player_colission.gd" id="3_qv5v6"]
+[ext_resource type="Script" path="res://stuff/player/scripts/state_mashine.gd" id="4_q42n0"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/ground/idle.gd" id="5_r5y4a"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/ground/walk.gd" id="6_245ja"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_srcfd"]
 size = Vector2(10, 14)
@@ -40,3 +43,14 @@ unique_name_in_owner = true
 position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_srcfd")
 script = ExtResource("3_qv5v6")
+
+[node name="states" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_q42n0")
+init_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="states"]
+script = ExtResource("5_r5y4a")
+
+[node name="walk" type="Node" parent="states"]
+script = ExtResource("6_245ja")

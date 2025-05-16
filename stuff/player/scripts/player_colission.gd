@@ -112,9 +112,9 @@ func toggle_collision(enabled:bool) -> void: #toggle self collision (like if we 
 
 
 #===== collision checks =====#
-func is_touching_ground() -> bool: #this function checks if the player is touching the ground #NOTE: currently we check for velocity too, which is fine, but I just wanna not it incase it causes problems in the future
-	var touching_ground = (ray_feet_left.is_colliding() or ray_feet_center.is_colliding() or ray_feet_right.is_colliding())
-	return touching_ground and player.total_velocity().y >= 0
+func is_touching_ground() -> bool: #this function checks if the player is touching the ground 
+	return(ray_feet_left.is_colliding() or ray_feet_center.is_colliding() or ray_feet_right.is_colliding())
+
 
 func is_touching_ceiling() -> bool: #checks if the player is touching the ceiling
 	return (ray_head_left.is_colliding() or ray_head_right.is_colliding()) and ray_head_center.is_colliding()
