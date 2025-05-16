@@ -210,15 +210,25 @@ func apply_friction(delta:float) -> void: ## apply friction to the player by slo
 	if abs(velocity.x) > 0: velocity.x = move_toward(velocity.x, 0, friction * delta)
 	if abs(other_velocity.x) > 0: other_velocity.x = move_toward(other_velocity.x, 0, friction * delta)
 
+
+var slower_multiplier:float = 0.5
+var faster_multiplier:float = 2.0
+
 func move(delta:float) -> void: ## move function for the player, modifies the movement velocity based on input and uses the global values to determine max speed, acceleration and deceleration
 	var horizontal_input = InputManager.horizontal.value #get input
-	if horizontal_input != 0: #if there is input
-		var _max_speed = max_move_speed*horizontal_input #set max speed to max speed times input
-		var _acceleration = move_acceleration * delta #set acceleration to acceleration times delta
-		movement_velocity.x = move_toward(movement_velocity.x, _max_speed, _acceleration)
-	elif abs(movement_velocity.x) > 0: #if there is no input (and we are still moving)
-		var _deceleration = move_deceleration * delta #set deceleration to deceleration times delta
-		movement_velocity.x = move_toward(movement_velocity.x, 0, _deceleration)
+	if abs(velocity.x) > max_move_speed: #if we are faster than the max speed
+		if horizontal_input != 0: #if there is input (manipulate velocity)
+			if sign(velocity.x) == sign(horizontal_input): #if we are moving with velocity
+				velocity.x = move_toward(velocity.x, 0, (friction * slower_multiplier) * delta) #slow down to max speed slower than normal
+			else: #if we are moving against velocity
+				velocity.x = move_toward(velocity.x, 0, (friction * faster_multiplier) * delta) #slow down to max speed faster than normal
+		else: #if there is no input
+			velocity.x = move_toward(velocity.x, 0, friction * delta) #slow down to max speed slower than normal
+	else: #if we are slower than the max speed
+		if horizontal_input != 0: #if there is input
+			velocity.x = move_toward(velocity.x, horizontal_input*max_move_speed, move_acceleration*delta) #accelerate to max speed
+		else: #if there is no input
+			velocity.x = move_toward(velocity.x, 0, move_deceleration * delta) #slow down to max speed slower than normal
 
 func slow_down(delta:float) -> void: ## slow down the players movement velocity down to 0 by the global deceleration value (just the stop part of the move function)
 	if abs(movement_velocity.x) > 0: #if there is no input (and we are still moving)
@@ -236,18 +246,18 @@ var previous_state:PlayerState = null ## the previous state the player was in #T
 func _ready_states(): ## ready the states and set default state #TODO: instead of registering states like this, I should add a states node to the player, and add each state as a child of that node. and then modify the baseState so on init it adds itself to the player. this way it would utilize the node system yay
 	_add_state(IdleState)
 	_add_state(WalkState)
-	_add_state(RunState)
-	_add_state(CrouchState)
-	_add_state(SlideState)
-	_add_state(FallState)
-	_add_state(FastFallState) #TODO: this doesn't seem to work currently
-	_add_state(AscendState)
-	_add_state(JumpState)
+	# _add_state(RunState)
+	# _add_state(CrouchState)
+	# _add_state(SlideState)
+	# _add_state(FallState)
+	# _add_state(FastFallState) #TODO: this doesn't seem to work currently
+	# _add_state(AscendState)
+	# _add_state(JumpState)
 	# _add_state(RunJumpState) #TODO
-	_add_state(WallEnterState)
-	_add_state(WalledState)
-	_add_state(WallSlideState)
-	_add_state(FastWallSlideState)
+	# _add_state(WallEnterState)
+	# _add_state(WalledState)
+	# _add_state(WallSlideState)
+	# _add_state(FastWallSlideState)
 	# _add_state(WallRunState) #TODO
 	
 	current_state = states[IdleState.id()] #set default state to idle #Note: since this set's it direcrly instead of using the state changer, this will skip the enter method of the state
@@ -295,11 +305,12 @@ func change_state(new_state_id:String) -> void: ## the function to change the st
 	_state_changer(new_state_id) #call the state changer function
 
 #========== Physics Process ==========#
+var _velocity_holder:Vector2 = Vector2()
 func _physics_process(delta): #physics process
 
 	#subtract the different velocitys from the main velocity
-	velocity -= movement_velocity
-	velocity -= other_velocity
+	# velocity -= movement_velocity
+	# velocity -= other_velocity
 
 	current_state.physics_process(delta)
 
@@ -309,11 +320,13 @@ func _physics_process(delta): #physics process
 	emit_signal("debug_total_velocity", total_velocity())
 
 	#readd the different velocitie stuff.
-	velocity += movement_velocity
-	velocity += other_velocity
+	# velocity += movement_velocity
+	# velocity += other_velocity
 	
+	_velocity_holder = Vector2(velocity.x, velocity.y) #save the velocity
 	var did_collide = move_and_slide() #apply velocity and stuff and then check for physics collisions
-
+	velocity = _velocity_holder #reset the velocity to the one we just calculated
+	
 	if did_collide: #reset velocitys if we collide with stuff (the hitbox, not just the raycasts)
 		for i in range(get_slide_collision_count()):
 			var slide_collision = get_slide_collision(i)
@@ -321,13 +334,13 @@ func _physics_process(delta): #physics process
 
 			if abs(normal.y) > 0.7: #Ground/ceiling collision
 				velocity.y = 0
-				movement_velocity.y = 0
-				other_velocity.y = 0
+				# movement_velocity.y = 0
+				# other_velocity.y = 0
 	
 			elif abs(normal.x) > 0.7: #Wall collision
 				velocity.x = 0
-				movement_velocity.x = 0
-				other_velocity.x = 0
+				# movement_velocity.x = 0
+				# other_velocity.x = 0
 
 #========== Normal Process ==========#
 func _process(delta):

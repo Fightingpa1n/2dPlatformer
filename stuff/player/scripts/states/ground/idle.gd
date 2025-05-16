@@ -5,7 +5,7 @@ static func id() -> String: return "idle" #id
 #The Idle State acts as the default state for the Player, but also be the state the player is in while standing still
 
 func physics_process(_delta):
-	if !ground_check(): return #do the ground check (if state change occured return)
+	if ground_check(): return #do the ground check (if state change occured return)
 
 	if InputManager.left.pressed or InputManager.right.pressed: #if the player is pressing a direction key
 		change_state(WalkState.id()) #change to walk state
