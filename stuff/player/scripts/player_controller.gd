@@ -206,7 +206,7 @@ var current_wall_direction:int = 0 ## the current wall direction of the player
 func apply_gravity(delta:float) -> void: ## apply gravity to the player by accelerating the fall speed until it reaches the given max fall speed, uses the global gravity value
 	velocity.y = move_toward(velocity.y, max_fall_speed, gravity*delta)
 
-func move(delta:float) -> void: ## move function for the player, modifies the movement velocity based on input and uses the global values to determine max speed, acceleration and deceleration
+func move(delta:float) -> void: ##move function for the player, modifies the movement velocity based on input and uses the global values to determine max speed, acceleration and deceleration
 	var horizontal_input = InputManager.horizontal.value #get input
 	if abs(velocity.x) > max_move_speed: #if we are faster than the max speed
 		if horizontal_input != 0: #if there is input (manipulate velocity)
@@ -221,6 +221,28 @@ func move(delta:float) -> void: ## move function for the player, modifies the mo
 			velocity.x = move_toward(velocity.x, horizontal_input*max_move_speed, move_acceleration*delta) #accelerate to max speed
 		else: #if there is no input
 			velocity.x = move_toward(velocity.x, 0, move_deceleration * delta) #slow down to max speed slower than normal
+
+
+#TODO: I need more different move stuff for individual parts. like just the adjusting. or just the move.
+
+
+func alter_deceleration(delta:float) -> void:
+	var horizontal_input = InputManager.horizontal.value #get input
+	if horizontal_input != 0:
+		if sign(velocity.x) == sign(horizontal_input): #if we are moving with velocity
+			velocity.x = move_toward(velocity.x, 0, (friction * slower_multiplier) * delta) #slow down to max speed slower than normal
+		else: #if we are moving against velocity
+			velocity.x = move_toward(velocity.x, 0, (friction * faster_multiplier) * delta) #slow down to max speed faster than normal
+		
+
+
+func apply_friction(delta:float) -> void: ##applies friction to the players velocity without allowing input to alter anything
+	velocity.x = move_toward(velocity.x, 0, friction * delta) #apply friction to the x velocity
+
+
+
+
+
 
 func wall_slide(delta:float) -> void: ## do wall sliding bases on the global wall slide speed and wall friction values
 	velocity.y = move_toward(velocity.y, wall_slide_speed, wall_friction*delta)
@@ -303,3 +325,9 @@ func get_previous_state() -> String: return states.previous_state.class.id() ## 
 #TODO: make a change state function where you can define a parent state like grounded or air
 #      and it will then automatically change to the correct state that extends said parent state
 #NOTE: I don't think this is needed if the States are good enough setup that they correctly switch between one another
+#NOTE: after a while now. I think this is a good idea again, I still don't know if it's needed but I like the idea of a thing that directly changes to the correct ground state instead of changing to idle and then in the idle enter function it checks if it's the right one.
+
+#NOTE: I will need to move them to somewhere better but for now I'll just put it here
+
+func ground_state() -> void: ##change to a ground state
+	pass #TODO

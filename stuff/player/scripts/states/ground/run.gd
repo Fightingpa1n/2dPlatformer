@@ -11,7 +11,7 @@ func enter():
     player.move_deceleration = player.RUN_DECELERATION #set the move deceleration to run deceleration
 
 func physics_process(delta):
-    if !ground_check(): return #do the ground check (if state change occured return)
+    if ground_check(): return #do the ground check (if state change occured return)
 
     move(delta) #move the player
 
@@ -20,22 +20,22 @@ func physics_process(delta):
         return
 
     elif (InputManager.left.pressed and InputManager.right.pressed): #if both left and right are pressed
-        if player.total_velocity().x == 0: #to a point where they cancel each other out long enough for the player to stop moving we change to idle
+        if player.velocity.x == 0: #to a point where they cancel each other out long enough for the player to stop moving we change to idle
             change_state(IdleState.id()) #change to idle state
             return
     
-    if (player.total_velocity().x == 0): #if we stop at any point while running, change to walk
+    if (player.velocity.x == 0): #if we stop at any point while running, change to walk
         change_state(WalkState.id()) #change to walk state
         return
     
-    apply_friction(delta) #apply friction to the player (ground defaults)
+    # apply_friction(delta) #apply friction to the player (ground defaults)
 
 func on_jump_press(): #on jump override from grounded state
     if player.jump_counter < player.JUMP_AMOUNT: #if we have jumps left
         print("entered jump from run") #debug
 
-        player.velocity.x = player.movement_velocity.x
-        player.movement_velocity.x = 0 #set the movement velocity to 0 so we don't move while jumping
+        # player.velocity.x = player.movement_velocity.x
+        # player.movement_velocity.x = 0 #set the movement velocity to 0 so we don't move while jumping
 
         #i probably should think about how I should handle run jumps, but I wanna try something real quick.
         # print(player.movement_velocity.x) #debug

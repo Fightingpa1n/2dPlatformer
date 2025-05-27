@@ -1,8 +1,9 @@
 extends AscendState
 class_name JumpState
 
-static func id() -> String: return "jump" #id
 #this is the jump state, which is when the player is moving upwards in the air it is different from jump
+
+static func id() -> String: return "jump" #id
 
 func enter():
 	super() #call the air state enter function
@@ -48,7 +49,7 @@ func on_jump_release(_time_pressed:float): #when we release the jump button
 	return
 
 func _exit_jump(): ## a helper function for the jump state to more accuratly exit
-	if player.total_velocity().y < 0: #if we are moving upwards
+	if player.velocity.y < 0: #if we are moving upwards
 		change_state(AscendState.id()) #change to ascend state
 	else: #if we are falling down
 		change_state(FallState.id()) #change to fall state

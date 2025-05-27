@@ -8,7 +8,6 @@ func physics_process(delta):
     if ground_check(): return #do the ground check (if state change occured return)
 
     move(delta) #move the player (ground defaults)
-    # player.velocity.x = 100
 
     if !InputManager.left.pressed and !InputManager.right.pressed: #if no input is pressed
         if player.velocity.x == 0: #once we stoped after no input
@@ -17,5 +16,5 @@ func physics_process(delta):
     
     # apply_friction(delta) #apply friction to the player (ground defaults)
 
-# func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
-# func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap
+func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
+func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap

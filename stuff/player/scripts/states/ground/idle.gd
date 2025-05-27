@@ -1,8 +1,9 @@
 extends ParentState_Grounded
 class_name IdleState
 
-static func id() -> String: return "idle" #id
 #The Idle State acts as the default state for the Player, but also be the state the player is in while standing still
+
+static func id() -> String: return "idle" #id
 
 func physics_process(_delta):
 	if ground_check(): return #do the ground check (if state change occured return)
@@ -12,8 +13,9 @@ func physics_process(_delta):
 		return
 	
 	if abs(player.velocity.x) >= player.RUN_SPEED: #if we are moving at run speed or faster
-		# change_state(RunState.id()) #change to run state
+		change_state(RunState.id()) #change to run state
 		return
+	
 	elif abs(player.velocity.x) > 0: #otherwise if we have any velocity on the x axis§
 		change_state(WalkState.id()) #change to walk state
 		return
@@ -24,5 +26,5 @@ func on_horizontal_direction(direction:float) -> void: #on horizontal input
 		change_state(WalkState.id()) #change to walk state
 		return
 
-# func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
-# func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap
+func on_left_doubletap(): change_state(RunState.id()) #change to run on double tap
+func on_right_doubletap(): change_state(RunState.id()) #change to run on double tap

@@ -2,6 +2,7 @@ extends PlayerState
 class_name ParentState_Wall
 
 #normally parent states are here to provide a common interface for their children but wallled is a bit of a special case #Future me: idk what that means? #cleanup me here: I still have no idea what that means
+
 func enter() -> void: #on enter set global vars to wall values
 	if player.current_wall_direction == 0: #if wall direction is not set
 		change_state(FallState.id()) #change to fall state

@@ -19,39 +19,29 @@ func normal_process(delta):
         if player.buffer_timer == 0: #if the buffer timer is 0
             player.buffer_jump = false #reset the buffer jump
 
-func wall_check() -> bool: ## check if player is touching wall, returns true on state change
-    if player.total_velocity().y < 0: return false #if we are moving upwards we don't want to check for walls #TODO: temporary solution until I have wall run implemented
-    var wall_direction = collision.get_wall_direction()
-    if wall_direction != 0: #if we are touching a wall
-        if not sign(InputManager.horizontal.value) == -wall_direction: #if we are not moving away from the wall
-            player.current_wall_direction = wall_direction #set the current wall direction
-            change_state(WallSlideState.id()) #change to wall slide state
-            return true
+func wall_check() -> bool: ##check if player is touching wall, returns true on state change #TODO
+    # if player.total_velocity().y < 0: return false #if we are moving upwards we don't want to check for walls #TODO: temporary solution until I have wall run implemented
+    # var wall_direction = collision.get_wall_direction()
+    # if wall_direction != 0: #if we are touching a wall
+    #     if not sign(InputManager.horizontal.value) == -wall_direction: #if we are not moving away from the wall
+    #         player.current_wall_direction = wall_direction #set the current wall direction
+    #         change_state(WallSlideState.id()) #change to wall slide state
+    #         return true
     return false
 
-func on_horizontal_direction(direction: float) -> void: #on horizontal input
-    var wall_direction = collision.get_wall_proximity_direction() #check if we are in proximity of a wall
-    if direction != 0 and wall_direction != 0: #if we are moving and there is a wall in proximity
-        if sign(direction) == wall_direction: #if we are moving towards the wall
-            player.current_wall_direction = wall_direction #set the current wall direction
-            change_state(WallEnterState.id()) #change to wall enter state
-            return
-
-func ground_check() -> bool: ## check if the player is still on the ground returns true if a state change has occured 
+func ground_check() -> bool: ##check if the player is still on the ground returns true if a state change has occured 
     if collision.is_touching_ground():
         change_state(IdleState.id())
         return true
-    else: return false
-
+    return false
 
 func physics_process(delta):
     if player.released_jump: #if gravity is still altered by jump realease
-        if player.total_velocity().y >= 0: #if we stoped moving upwards or are moving downwards
+        if player.veloctiy.y >= 0: #if we stoped moving upwards or are moving downwards
             player.gravity = player.GRAVITY #reset gravity
             player.released_jump = false #reset released jump
     
     apply_gravity(delta) #apply gravity
-    apply_friction(delta) #apply friction
 
 
 func coyote_jump() -> bool: ## try do do coyote jump and return true on state change
@@ -70,3 +60,10 @@ func on_jump_press(): #on jump input
     if coyote_jump(): return #coyote jump
     if air_jump(): return #air jump
 
+func on_horizontal_direction(direction: float) -> void: #on horizontal input
+    var wall_direction = collision.get_wall_proximity_direction() #check if we are in proximity of a wall
+    if direction != 0 and wall_direction != 0: #if we are moving and there is a wall in proximity
+        if sign(direction) == wall_direction: #if we are moving towards the wall
+            player.current_wall_direction = wall_direction #set the current wall direction
+            change_state(WallEnterState.id()) #change to wall enter state
+            return

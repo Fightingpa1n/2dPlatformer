@@ -115,7 +115,6 @@ func toggle_collision(enabled:bool) -> void: #toggle self collision (like if we 
 func is_touching_ground() -> bool: #this function checks if the player is touching the ground 
 	return(ray_feet_left.is_colliding() or ray_feet_center.is_colliding() or ray_feet_right.is_colliding())
 
-
 func is_touching_ceiling() -> bool: #checks if the player is touching the ceiling
 	return (ray_head_left.is_colliding() or ray_head_right.is_colliding()) and ray_head_center.is_colliding()
 

@@ -14,6 +14,7 @@ var _is_transitioning = false ##if the state machine is currently transitioning 
 #=================== Init ===================#
 func _ready() -> void: #on node Ready
     player = get_parent() as PlayerController #get the player reference
+    await player.ready
     for child in get_children(): #for each child of the state machine
         if child is PlayerState: #if the child is a state
             if child.id() == "": #if the state has no id

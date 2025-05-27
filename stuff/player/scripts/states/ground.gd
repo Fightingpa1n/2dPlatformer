@@ -19,20 +19,17 @@ func enter(): #on enter any grounded state should reset values like coyote time 
 			change_state(JumpState.id()) #jump
 			return
 	
-func ground_check() -> bool: ## check if the player is still on the ground returns false if a state change has occured
+func ground_check() -> bool: ##check if player is still on the ground, returns true on state change
+	if !collision.is_touching_ground():
+		change_state(FallState.id())
+		return true
 	return false
-	# if !collision.is_touching_ground():
-	# 	change_state(FallState.id())
-	# 	return false
-	# else: return true
 
 func on_jump_press(): #the jump init can be handled here since pretty much all grounded states won't need to alter it (except for the ones that do)
-	pass
-	# if player.jump_counter < player.JUMP_AMOUNT: #if we have jumps left
-	# 	change_state(JumpState.id())
-	# 	return
+	if player.jump_counter < player.JUMP_AMOUNT: #if we have jumps left
+		change_state(JumpState.id())
+		return
 
-func on_crouch_press(): #the crouch init can be handled here since pretty much all grounded states won't need to alter it
-	pass
+func on_crouch_press(): #the crouch init can be handled here since pretty much all grounded states won't need to alter it #this might need to be changed.
 	change_state(CrouchState.id())
 	return

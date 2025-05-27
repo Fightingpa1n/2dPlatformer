@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bwxbyv5so6cwd"]
+[gd_scene load_steps=14 format=3 uid="uid://bwxbyv5so6cwd"]
 
 [ext_resource type="Script" path="res://stuff/player/scripts/player_controller.gd" id="1_kcbae"]
 [ext_resource type="Texture2D" uid="uid://cnqwsd1haq3ig" path="res://stuff/player/fighter.png" id="2_r82kv"]
@@ -6,6 +6,12 @@
 [ext_resource type="Script" path="res://stuff/player/scripts/state_mashine.gd" id="4_q42n0"]
 [ext_resource type="Script" path="res://stuff/player/scripts/states/ground/idle.gd" id="5_r5y4a"]
 [ext_resource type="Script" path="res://stuff/player/scripts/states/ground/walk.gd" id="6_245ja"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/air/fall.gd" id="7_peoh4"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/air/ascend.gd" id="8_004ga"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/ground/run.gd" id="8_gp6sa"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/ground/crouch.gd" id="8_nl5t1"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/ground/slide.gd" id="9_jowyy"]
+[ext_resource type="Script" path="res://stuff/player/scripts/states/air/jump.gd" id="12_glwf6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_srcfd"]
 size = Vector2(10, 14)
@@ -54,3 +60,21 @@ script = ExtResource("5_r5y4a")
 
 [node name="walk" type="Node" parent="states"]
 script = ExtResource("6_245ja")
+
+[node name="crouch" type="Node" parent="states"]
+script = ExtResource("8_nl5t1")
+
+[node name="run" type="Node" parent="states"]
+script = ExtResource("8_gp6sa")
+
+[node name="slide" type="Node" parent="states"]
+script = ExtResource("9_jowyy")
+
+[node name="fall" type="Node" parent="states"]
+script = ExtResource("7_peoh4")
+
+[node name="ascend" type="Node" parent="states"]
+script = ExtResource("8_004ga")
+
+[node name="jump" type="Node" parent="states"]
+script = ExtResource("12_glwf6")

@@ -23,23 +23,19 @@ func physics_process(delta):
 		return
 	
 	ledge_forgivness() #call ledge forgivness
-
 	move(delta)
+
 
 	# if InputManager.down.pressed: #while holding down the player will fast fall
 	# 	if player.total_velocity().y > 0:
 	# 		# change_state("fast_fall")
 	# 		return
 
-
-
-func ceiling_hit() -> bool: ## check if the player is hitting the ceiling
+func ceiling_hit() -> bool: ##check if the player is hitting the ceiling, returns true on state change
 	if collision.is_touching_ceiling():
 		change_state(FallState.id())
 		return true
-	else: return false
-
-func on_horizontal_direction(_direction: float) -> void: pass #override the on_horizontal_direction as we don't want to wall in this state #TODO: add wall run
+	return false
 
 func ledge_forgivness(): ##do ledge forgivness when accending
 	var ray = collision.return_ceiling_ledge_forgiveness_thingy_idk()
@@ -54,3 +50,5 @@ func ledge_forgivness(): ##do ledge forgivness when accending
 func on_jump_press():
 	if coyote_jump(): return #coyote jump (probably not needed in the ascend state)
 	if air_jump(): return #air jump
+
+func on_horizontal_direction(_direction: float) -> void: pass #override the on_horizontal_direction as we don't want to wall in this state #TODO: add wall run

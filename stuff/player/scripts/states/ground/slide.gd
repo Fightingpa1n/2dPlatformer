@@ -18,9 +18,11 @@ func physics_process(delta):
         else:
             change_state(IdleState.id()) #if not change to idle state
             return
+
+    move(delta) #move the player (ground defaults)
     
     # Apply slide deceleration
-    slow_down(delta)
+    # slow_down(delta)
 
     if !InputManager.crouch.pressed: #if the crouch key is released
         change_state(WalkState.id()) #change to walk state
