@@ -42,6 +42,7 @@ func physics_process(delta):
 	
 	apply_gravity(delta) #apply gravity
 
+
 func on_jump_press(): pass #override the on_jump_press of air states to do nothing
 
 func on_jump_release(_time_pressed:float): #when we release the jump button

@@ -224,6 +224,7 @@ func move(delta:float) -> void: ##move function for the player, modifies the mov
 
 
 #TODO: I need more different move stuff for individual parts. like just the adjusting. or just the move.
+#I already did the alter deceleration and apply friction. but these were made in a let's say not the best mindset so idk how good they actually are
 
 
 func alter_deceleration(delta:float) -> void:

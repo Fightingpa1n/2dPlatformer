@@ -25,6 +25,9 @@ func _ready() -> void: #on node Ready
             child.player = player #set the player reference of the state
             child.collision = player.collision #set the collision reference of the state
             child.states = self #set the state machine reference of the state
+    if init_state == NodePath(""): #if the initial state is not set
+        printerr("Initial state is not set! Please set it in the editor!") #print error message
+        return #do nothing
     current_state = get_node(init_state) #get the initial state
     _connect_input() #connect the input signals
 
@@ -107,3 +110,15 @@ func _on_jump_dt(): current_state.on_jump_doubletap() #jump|double tap
 func _on_crouch_press(): current_state.on_crouch_press() #crouch|on press
 func _on_crouch_release(time_pressed: float): current_state.on_crouch_release(time_pressed) #crouch|on release
 func _on_crouch_dt(): current_state.on_crouch_doubletap() #crouch|double tap
+
+
+
+
+
+
+
+#TODO:
+
+#enter ground
+func enter_ground_thing(): #pls rename
+    if !player.collision.is_touching_ground(): return #don't change to ground state i
