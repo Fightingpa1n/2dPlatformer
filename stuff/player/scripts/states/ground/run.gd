@@ -33,7 +33,7 @@ func physics_process(delta):
 func on_jump_press(): #on jump override from grounded state
     if player.jump_counter < player.JUMP_AMOUNT: #if we have jumps left
         print("entered jump from run") #debug
-        change_state(RunJumpState.id()) #change to run jump state
+        # change_state(RunJumpState.id()) #change to run jump state
 
         # player.velocity.x = player.movement_velocity.x
         # player.movement_velocity.x = 0 #set the movement velocity to 0 so we don't move while jumping
@@ -42,7 +42,7 @@ func on_jump_press(): #on jump override from grounded state
         # print(player.movement_velocity.x) #debug
         # player.velocity.x = float(player.movement_velocity.x) #set the x velocity to the current velocity
         # print(player.velocity.x) #debug
-        # change_state(JumpState.id())
+        change_state(JumpState.id())
         return
 
 func on_crouch_press() -> void: #on crouch input

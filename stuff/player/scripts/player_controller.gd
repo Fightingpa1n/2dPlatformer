@@ -75,7 +75,7 @@ class_name PlayerController
 
 @export_group("Friction") ## Friction is the value used to slow down player velocity
 @export var GROUND_FRICTION:float = 2600.0 ## the deceleration applied to velocitys when the player is on the ground
-@export var AIR_FRICTION:float = 1000.0 ## the deceleration applied to velocitys when the player is in the air
+@export var AIR_FRICTION:float = 100.0 ## the deceleration applied to velocitys when the player is in the air
 
 #==================== Movement ====================#
 @export_category("Movement") ## Movement related values
@@ -95,7 +95,7 @@ class_name PlayerController
 #========== Air ==========#
 @export var AIR_SPEED:float = 100.0 ## the speed the player moves in the air (at a maximum)
 @export var AIR_ACCELERATION:float = 1000.0 ## the movment acceleration in the air
-@export var AIR_DECELERATION:float = 500.0 ## the movment deceleration in the air
+@export var AIR_DECELERATION:float = 100.0 ## the movment deceleration in the air
 
 #========== Jump ==========#
 @export_group("Jump") ## Jump related values
@@ -196,7 +196,7 @@ var jump_force:float = JUMP_FORCE ## the current jump force of the player
 var wall_slide_speed:float = WALL_SLIDE_SPEED ## the current max wall slide speed of the player
 var wall_friction:float = WALL_FRICTION ## the current wall friction of the player
 
-var slower_multiplier:float = 0.5 #TODO: sort & rename
+var slower_multiplier:float = 0.25 #TODO: sort & rename
 var faster_multiplier:float = 2.0 #TODO: sort & rename
 
 var current_wall_direction:int = 0 ## the current wall direction of the player
@@ -209,10 +209,13 @@ func apply_gravity(delta:float) -> void: ## apply gravity to the player by accel
 func move(delta:float) -> void: ##move function for the player, modifies the movement velocity based on input and uses the global values to determine max speed, acceleration and deceleration
 	var horizontal_input = InputManager.horizontal.value #get input
 	if abs(velocity.x) > max_move_speed: #if we are faster than the max speed
+		print("moving above max speed")
 		if horizontal_input != 0: #if there is input (manipulate velocity)
 			if sign(velocity.x) == sign(horizontal_input): #if we are moving with velocity
+				print("using slower multiplier: ", slower_multiplier)
 				velocity.x = move_toward(velocity.x, 0, (friction * slower_multiplier) * delta) #slow down to max speed slower than normal
 			else: #if we are moving against velocity
+				print("using faster multiplier: ", faster_multiplier)
 				velocity.x = move_toward(velocity.x, 0, (friction * faster_multiplier) * delta) #slow down to max speed faster than normal
 		else: #if there is no input
 			velocity.x = move_toward(velocity.x, 0, friction * delta) #slow down to max speed slower than normal

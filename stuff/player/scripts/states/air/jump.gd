@@ -34,6 +34,7 @@ func physics_process(delta):
 		else: #if the jump time is more than the max jump time
 			_exit_jump() #stop jumping
 			return
+	
 	else: #if the jump button is released
 		player.gravity = player.RELEASE_GRAVITY #set the gravity to the release gravity
 		player.released_jump = true #set the released jump to true
