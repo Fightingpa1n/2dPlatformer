@@ -37,7 +37,7 @@ func ground_check() -> bool: ##check if the player is still on the ground return
 
 func physics_process(delta):
 	if player.released_jump: #if gravity is still altered by jump realease
-		if player.veloctiy.y >= 0: #if we stoped moving upwards or are moving downwards
+		if player.velocity.y >= 0: #if we stoped moving upwards or are moving downwards
 			player.gravity = player.GRAVITY #reset gravity
 			player.released_jump = false #reset released jump
 	
