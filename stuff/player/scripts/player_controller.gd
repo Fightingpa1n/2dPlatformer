@@ -180,9 +180,8 @@ func _ready(): #Ready the player
 	# movement_velocity = Vector2() #set the movement velocity to 0
 	# other_velocity = Vector2() #set the other velocity to 0
 
-
-#! I really fucked myself in the foot with this one, the whole velocity thing seemed nice at first but it's just such a mess...
-#maybe I'll have to go to the drawing board to figure out exactly what I want and how to do it...
+#I now fixed the issue by remaking the physics thing once again. the problem now is that move_deceleration may be obsolete. since before I could use it specifically for slowing down move velocity, now that it's just one I use friction for most deceleration stuff.
+#idk
 
 #============================== Physics/Movement/Idk ==============================# #TODO: find better name
 #========== "Global"/Current Movement Vars ==========# #TODO: find better name
@@ -211,7 +210,7 @@ func move(delta:float) -> void: ##move function for the player, modifies the mov
 	if abs(velocity.x) > max_move_speed: #if we are faster than the max speed
 		if horizontal_input != 0: #if there is input (manipulate velocity)
 			if sign(velocity.x) == sign(horizontal_input): #if we are moving with velocity
-				velocity.x = move_toward(velocity.x, 0, (friction * slower_multiplier) * delta) #slow down to max speed slower than normal
+				velocity.x = move_toward(velocity.x, 0, (friction*slower_multiplier) * delta) #slow down to max speed slower than normal
 			else: #if we are moving against velocity
 				velocity.x = move_toward(velocity.x, horizontal_input*max_move_speed, move_acceleration*delta) #accelerate to max speed
 		else: #if there is no input
@@ -222,27 +221,18 @@ func move(delta:float) -> void: ##move function for the player, modifies the mov
 		else: #if there is no input
 			velocity.x = move_toward(velocity.x, 0, move_deceleration * delta) #slow down to max speed slower than normal
 
-
-#I WOULD LIKE TO CHANGE THIS THOUGH. where the adjussting of velocity greater than max speed.
-# I would like to do make the velocity adjusting the same but only while above 2xmax speed.
-# otherwise if just above max speed. it should only adjust for no imput or if input is in the same direction as the velocity. otherwise it should just use the normal move instead then.
-
-
-#TODO: I need more different move stuff for individual parts. like just the adjusting. or just the move.
-#I already did the alter deceleration and apply friction. but these were made in a let's say not the best mindset so idk how good they actually are
-
-
-func alter_deceleration(delta:float) -> void:
+func apply_adjustable_friction(delta:float) -> void:
 	var horizontal_input = InputManager.horizontal.value #get input
-	if horizontal_input != 0:
-		if sign(velocity.x) == sign(horizontal_input): #if we are moving with velocity
-			velocity.x = move_toward(velocity.x, 0, (friction * slower_multiplier) * delta) #slow down to max speed slower than normal
-		else: #if we are moving against velocity
-			velocity.x = move_toward(velocity.x, 0, (friction * faster_multiplier) * delta) #slow down to max speed faster than normal
+	if horizontal_input != 0: #if there is input
+		if sign(velocity.x) == sign(horizontal_input): #if the player is moving with the input
+			velocity.x = move_toward(velocity.x, 0, (friction*slower_multiplier) * delta) #slow down to 0 slower than normal (meaning farther)
+		else: #if the player is moving against the input
+			velocity.x = move_toward(velocity.x, 0, (friction*faster_multiplier) * delta) #slow down to 0 faster than normal (meaning less far)
+	else: #if the player is moving against the input
+		velocity.x = move_toward(velocity.x, 0, friction * delta) #slow down to 0 normally
 
-func apply_friction(delta:float) -> void: ##applies friction to the players velocity without allowing input to alter anything
-	velocity.x = move_toward(velocity.x, 0, friction * delta) #apply friction to the x velocity
-
+func apply_friction(delta:float) -> void: ## apply friction to the player by slowing down the velocity based on the global friction value
+	velocity.x = move_toward(velocity.x, 0, friction * delta) #slow down to 0 normally
 
 func wall_slide(delta:float) -> void: ## do wall sliding bases on the global wall slide speed and wall friction values
 	velocity.y = move_toward(velocity.y, wall_slide_speed, wall_friction*delta)

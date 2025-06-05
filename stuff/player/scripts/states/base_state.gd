@@ -73,4 +73,6 @@ func change_state(new_state_id:String) -> void:
 #========= Physics =========#
 func apply_gravity(delta:float) -> void: player.apply_gravity(delta) ## wrapper for the player's apply gravity method
 func move(delta:float) -> void: player.move(delta) ## wrapper for the player's move method
+func apply_adjustable_friction(delta:float) -> void: player.apply_adjustable_friction(delta) ## wrapper for the player's apply adjustable friction method
+func apply_friction(delta:float) -> void: player.apply_friction(delta) ## wrapper for the player's apply friction method
 func wall_slide(delta:float) -> void: player.wall_slide(delta) ## wrapper for the player's wall slide method
